@@ -150,16 +150,6 @@ def count_solution_instances(channel_id_value):
     count = channel_id_list.count(channel_id_value)
     return count
     
-def more_than_one_set(channel_id_value):
-    """Checks 1 condition to validate if site has more than 1 set.
-        Args: 
-        channel_id_value: Any value from the Column channel_id
-    Returns:
-        True if channel_id has 2 or more values in the whole database table
-        THis means that the solution (For example FC BR Combo has 2 sets created in SB Local )
-      """
-    count = channel_id_list.count(channel_id_value)
-    return count >= 2
 
 def name_constructor_one_set_solution(channel_id_value):
     count = channel_id_list.count(channel_id_value)
