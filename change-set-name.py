@@ -23,6 +23,7 @@ channel_id_list = []
 # Channel ID to Name mapping
 channel_name_map = {
     "1": "DT DNK Combo -",
+    "3": "Coates-System -",
     "4": "DT DNK Presell -",
     "5": "FC DNK -",
     "6": "WUW DNK -",
