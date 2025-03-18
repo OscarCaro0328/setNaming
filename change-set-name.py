@@ -93,7 +93,7 @@ def query_screen_set():
         return None
 
 
-#takes the query results already separated in rows, and splits results in 3 arrays
+#takes the query results already separated in rows, and splits results in 3 lists
 def process_query_results(query_result):
     """Processes the query results from Bash output and creates 3 lists.
     Args: 
@@ -110,10 +110,7 @@ def process_query_results(query_result):
                 name_list.append(parts[1])
                 channel_id_list.append(parts[2])
 
-    
-    # print(f"ID Array: {id_array}")
-    # print(f"Name Array: {name_array}")
-    # print(f"Channel ID Array: {channel_id_array}")
+
 
 
 def is_failover(input_string):
@@ -151,10 +148,6 @@ def count_solution_instances(channel_id_value):
     return count
     
 
-def name_constructor_one_set_solution(channel_id_value):
-    count = channel_id_list.count(channel_id_value)
-    
-
 
 ############### MAIN #####################
 test_db_connection()
@@ -163,17 +156,19 @@ if data:
     #print(f" query preprocessing: {data}")
     process_query_results(data)
 
-
-
 #Name creation
 for i in range(len(id_list)):
     
+    #Prints the 3 values from each row of the screen_set table
     print(f"""ID={id_list[i]}, Name={name_list[i]}, Channel ID={channel_id_list[i]}, 
           solution count {count_solution_instances(channel_id_list[i])}""")
     
+    #If a channel has only one occurance, no failover or set 2 possible
     if count_solution_instances(channel_id_list[i]) == 1:
         new_name = channel_name_map[channel_id_list[i]] + SET_1
         print(f"New name would be: {new_name}" )
+
+    #iF a channel has 2 occurances one set will be primary and the other one Failover
     if count_solution_instances(channel_id_list[i]) == 2:
         new_name = channel_name_map[channel_id_list[i]] + SET_1 + is_failover(name_list[i])
         print(f"New name would be: {new_name}" )
