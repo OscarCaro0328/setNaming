@@ -193,6 +193,40 @@ def failover_identified(target_channel_id):
 
     return failover_found    
 
+
+def change_db_value(id, value):
+    """Changes the desired value in the local database.
+
+    Args:
+        id: The ID of the row to update.
+        value: The new value for the 'name' column.
+
+    Returns:
+        True if the update was successful, False otherwise.
+    """
+    try:
+        
+        query_change = f"UPDATE {SCREEN_SET_TABLE} SET name = '{value}' WHERE id = {id};"
+
+        # Use double quotes around the query in the -e argument
+        command = f"mysql -u {DB_USER} -p'{DB_PASSWORD}' -D {DB_NAME} -e \"{query_change}\""
+
+        process = subprocess.run(command, shell=True, capture_output=True, text=True, check=True)
+
+        if process.returncode == 0:
+            print("Name changed successfully.")
+            return True
+        else:
+            print(f"Error changing name: {process.stderr}")
+            return False
+
+    except subprocess.CalledProcessError as e:
+        print(f"Error: Unable to connect to the MySQL database. Please check your credentials and database settings. {e}")
+        return False
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        return False
+
 ############### MAIN #####################
 test_db_connection()
 data = query_screen_set()
@@ -207,13 +241,13 @@ for i in range(len(id_list)):
     
     #Prints the 3 values from each row of the screen_set table (for testing)
     print(f"""ID={id_list[i]}, Name={name_list[i]}, Channel ID={channel_id_list[i]}, solution count {count_solution_instances(channel_id_list[i])}, failover_identified: {failover_identified(channel_id_list[i])}""")
-    
 
     #If a channel has only one occurance, no failover or set 2 possible, name changing for sure
     if count_solution_instances(channel_id_list[i]) == 1:
         try:
             new_name = channel_name_map[channel_id_list[i]] + SET_1
             print(f"New name would be: {new_name}")
+            change_db_value(int(id_list[i]),new_name)
             # Here goes the sql line to change name. 
         except KeyError:
             print(f"Error: Channel ID '{channel_id_list[i]}' not found in channel_name_map.Skipping this value")
@@ -226,5 +260,6 @@ for i in range(len(id_list)):
     if count_solution_instances(channel_id_list[i]) == 2 and failover_identified(channel_id_list[i]):
         new_name = channel_name_map[channel_id_list[i]] + SET_1 + is_failover(name_list[i])
         print(f"New name would be: {new_name}" )
+        change_db_value(int(id_list[i]),new_name)
 #    else:
 #       print(f"Unable to identify failover, not changing naming scheme in channel {channel_name_map[channel_id_list[i]]}")
