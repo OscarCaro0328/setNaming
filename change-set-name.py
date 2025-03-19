@@ -134,6 +134,7 @@ def is_failover(input_string):
     else:
         return NOT_FAILOVER
     
+
 def count_solution_instances(channel_id_value):
     """
     Counts occurrences of a solution value (channel_id).
@@ -165,10 +166,16 @@ for i in range(len(id_list)):
     
     #If a channel has only one occurance, no failover or set 2 possible
     if count_solution_instances(channel_id_list[i]) == 1:
-        new_name = channel_name_map[channel_id_list[i]] + SET_1
-        print(f"New name would be: {new_name}" )
+        try:
+            new_name = channel_name_map[channel_id_list[i]] + SET_1
+            print(f"New name would be: {new_name}")
+            # Here goes the sql line to change name
+        except KeyError:
+            print(f"Error: Channel ID '{channel_id_list[i]}' not found in channel_name_map.")
+            # Handle the error, e.g., log it, skip the SQL update, etc.       
 
-    #iF a channel has 2 occurances one set will be primary and the other one Failover
+
+    #If a channel has 2 occurances one set will be primary and the other one Failover
     if count_solution_instances(channel_id_list[i]) == 2:
         new_name = channel_name_map[channel_id_list[i]] + SET_1 + is_failover(name_list[i])
         print(f"New name would be: {new_name}" )
