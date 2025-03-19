@@ -19,6 +19,7 @@ NOT_FAILOVER = ""
 id_list = []
 name_list = []
 channel_id_list = []
+failover_list = []
 
 # Channel ID to Name mapping
 channel_name_map = {
@@ -135,6 +136,8 @@ def is_failover(input_string):
         return NOT_FAILOVER
     
 
+
+
 def count_solution_instances(channel_id_value):
     """
     Counts occurrences of a solution value (channel_id).
@@ -147,8 +150,48 @@ def count_solution_instances(channel_id_value):
     """
     count = channel_id_list.count(channel_id_value)
     return count
-    
 
+
+def create_failover_values_lists():
+    """
+    Creates a list of failover values (1 or 0) based on the name_list.
+
+    Args:
+        name_list: A list of names to check for failover status.
+
+    Returns:
+        A list of bools (1 or 0) representing failover status.
+    """    
+    failover_list = [0] * len(name_list)
+    for i in range(len(name_list)):
+        if is_failover(name_list[i]) == "Failover":
+            failover_list[i] = 1
+    return failover_list
+
+
+def failover_identified(target_channel_id):
+    """
+    Checks if a target_channel_id has a corresponding flag of 1 in the failover_list.
+
+    Args:
+        target_channel_id: The channel ID to search for.
+
+    Returns:
+        True if at least one corresponding flag is 1, False otherwise.
+        This means Failover has been identified succesfully
+    """
+
+    if len(channel_id_list) != len(failover_list):
+        raise ValueError("channel_id_list and flag_list must have the same length.")
+
+    failover_found = False
+
+    for i in range(len(channel_id_list)):
+        if channel_id_list[i] == target_channel_id and failover_list[i] == 1:
+            failover_found = True
+            break  # No need to continue searching if a 1 is found
+
+    return failover_found    
 
 ############### MAIN #####################
 test_db_connection()
@@ -157,25 +200,31 @@ if data:
     #print(f" query preprocessing: {data}")
     process_query_results(data)
 
+failover_list = create_failover_values_lists()
+
 #Name creation
 for i in range(len(id_list)):
     
-    #Prints the 3 values from each row of the screen_set table
-    print(f"""ID={id_list[i]}, Name={name_list[i]}, Channel ID={channel_id_list[i]}, 
-          solution count {count_solution_instances(channel_id_list[i])}""")
+    #Prints the 3 values from each row of the screen_set table (for testing)
+    print(f"""ID={id_list[i]}, Name={name_list[i]}, Channel ID={channel_id_list[i]}, solution count {count_solution_instances(channel_id_list[i])}, failover_identified: {failover_identified(channel_id_list[i])}""")
     
-    #If a channel has only one occurance, no failover or set 2 possible
+
+    #If a channel has only one occurance, no failover or set 2 possible, name changing for sure
     if count_solution_instances(channel_id_list[i]) == 1:
         try:
             new_name = channel_name_map[channel_id_list[i]] + SET_1
             print(f"New name would be: {new_name}")
-            # Here goes the sql line to change name
+            # Here goes the sql line to change name. 
         except KeyError:
-            print(f"Error: Channel ID '{channel_id_list[i]}' not found in channel_name_map.")
-            # Handle the error, e.g., log it, skip the SQL update, etc.       
+            print(f"Error: Channel ID '{channel_id_list[i]}' not found in channel_name_map.Skipping this value")
+            # Skip the SQL update, Value not found
 
 
     #If a channel has 2 occurances one set will be primary and the other one Failover
-    if count_solution_instances(channel_id_list[i]) == 2:
+    #If we are not able to identify failover channel, we will skip name changing in this channel
+    # This is to avoid both sets being named the same in a channel. 
+    if count_solution_instances(channel_id_list[i]) == 2 and failover_identified(channel_id_list[i]):
         new_name = channel_name_map[channel_id_list[i]] + SET_1 + is_failover(name_list[i])
         print(f"New name would be: {new_name}" )
+#    else:
+#       print(f"Unable to identify failover, not changing naming scheme in channel {channel_name_map[channel_id_list[i]]}")
