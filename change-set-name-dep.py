@@ -208,6 +208,19 @@ def get_channels_list():
   return unique_list    
 
 
+def run_sb_package():
+    """Runs the 'switchboard package' command in a shell and returns the output."""
+    try:
+        result = subprocess.run(
+            ["switchboard", "package"],  # Command as a list
+            text=True,                  # Ensures output is in string format
+            capture_output=True,        # Captures stdout and stderr
+            check=True                  # Raises an error if the command fails
+        )
+        return result.stdout  # Return the output of the command
+    except subprocess.CalledProcessError as e:
+        return f"Error: {e.stderr}"  # Return error message if the command fails   
+
 ############### MAIN #####################
 test_db_connection()
 data = query_screen_set()
@@ -263,3 +276,4 @@ for i in range(len(id_list)):
         except KeyError:
             print(f"Error: Channel ID '{channel_id_list[i]}' not found in channel_name_map. Skipping this value")
 
+run_sb_package()
