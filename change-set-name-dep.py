@@ -2,6 +2,7 @@
 
 import subprocess
 import re
+import sys
 
 # Database Configuration
 DB_USER = "root"
@@ -21,7 +22,7 @@ name_list = []
 channel_id_list = []
 failover_list = []
 
-
+#is_device_prime="$([[ "$(</var/lib/switchboard/data/network.upstream)" == "$(</var/lib/switchboard/data/network.hq)" ]] && echo true || echo false)"
 
 # Channel ID to Name mapping
 channel_name_map = {
@@ -221,8 +222,35 @@ def run_sb_package():
         return result.stdout  # Return the output of the command
     except subprocess.CalledProcessError as e:
         return f"Error: {e.stderr}"  # Return error message if the command fails   
+    
+def is_device_prime():
+    """
+    Checks if network.upstream and network.hq files are the same.
+
+    Returns:
+        True if MP is prime, False otherwise.
+    """
+    upstream_file = "/var/lib/switchboard/data/network.upstream"
+    hq_file = "/var/lib/switchboard/data/network.hq"
+
+    try:
+        with open(upstream_file, "r") as f_upstream, open(hq_file, "r") as f_hq:
+            upstream_content = f_upstream.read().strip()
+            hq_content = f_hq.read().strip()
+            return upstream_content == hq_content
+
+    except FileNotFoundError as e:
+        print(f"Error: File not found: {e.filename}")
+        return False
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        return False
 
 ############### MAIN #####################
+
+if not is_device_prime():
+    sys.exit("Device is not prime. Exiting.")
+
 test_db_connection()
 data = query_screen_set()
 if data:
