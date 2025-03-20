@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+#Script to update screen_set db table in media players for Prod Dunkin Domain
+
+
+
 
 import subprocess
 import re
