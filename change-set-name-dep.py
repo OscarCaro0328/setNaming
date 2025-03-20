@@ -167,13 +167,13 @@ def change_db_value(id, value):
     
 def is_failover():
     """
-    Creates a list of 0s and 1s based on the occurrence count of values in channel_id_list.
+    Creates a list of 0s and 1s based on the occurrence count of values in channel_id_list. 1s are failover, zeros arent
 
     Args:
         channel_id_list: A list of channel_id values.
 
     Returns:
-        A list of 0s and 1s, where 1 indicates a repeated value, and 0 indicates a new or third occurrence.
+        A list of 0s and 1s, where 1 indicates a failover set, and 0 indicates a primary set.
     """
     occurrence_counts = {}  # Dictionary to store occurrence counts
     result_list = []
