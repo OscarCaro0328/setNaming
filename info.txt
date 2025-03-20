@@ -1,0 +1,138 @@
+Query specific screenset in DB
+Rename specific screenset in DB
+Screen Set Name
+
+TABLE = channel => Channels added to the store
++----+--------------------------------+----------------------+-----------+---------+
+| id | name                           | override_schedule_id | colour_id | version |
++----+--------------------------------+----------------------+-----------+---------+
+|  5 | Front Counter - Horizontal - 4 |                 NULL |      NULL |       3 |
++----+--------------------------------+----------------------+-----------+---------+
+
+
+TABLE = channelgroup => could be the one
++----+----------------------+
+| id | name                 |
++----+----------------------+
+|  5 | 80019-no-cb          |
+| 28 | APOD                 |
+| 18 | BASKINROBBINS        |
+| 30 | DISABLE_WINDOW       |
+| 26 | DT                   |
+| 15 | DT_DU                |
+|  8 | DT_PS                |
+| 17 | DU_WUW               |
+| 41 | EXT_PROMO            |
+| 42 | EXT_V_PROMO          |
+| 45 | EXTDMB               |
+| 39 | FC                   |
+| 19 | FC_BR                |
+| 27 | FC_BR_SIMP           |
+| 29 | FC_BR_STAND          |
+| 40 | FC_H1                |
+| 31 | FC_H2                |
+
+TABLE = channelgroup_channel => 
+ id  | channelgroup_id | channel_id |
++-----+-----------------+------------+
+| 329 |              12 |          5 |
+| 330 |              13 |          5 |
+| 331 |              14 |          5 |
+| 332 |               3 |          5 |
++-----+-----------------+------------
+
+
+--------------------------------+
+| Tables_in_switchboard          |
++--------------------------------+
+| channel                        | Channels added to location
+| channel_screen                 | Measurments for screens pixels height etc
+| channel_screen_property        | nothing
+| channel_screen_property_option | property name and value
+| channelgroup                   | seems like gropups for content
+| channelgroup_channel           | Content so it seems
+| colour                         | nothing
+| content                        | content
+| content_type                   | types of files
+| content_type_map               | extensions
+| contentgroup                   | Same as channelgroup
+| contentgroup_content           | Content relations
+| data_link                      | content relations
+| data_source                    | urls for content
+| day                            | days
+| device                         | device infos
+| device_output                  | info for mps outputs
+| heartbeat                      | nothing
+| location                       | name of location
+| location_channel               |
+| locationgroup                  |Same as channelgroup
+| locationgroup_location         |
+| notification                   |
+| notification_archive           |
+| permission                     |
+| property_editor                |
+| publication                    |
+| schedule                       |
+| schedule_day                   |
+| schedule_item                  |
+| schedule_item_content          |
+| screen                         |
+| screen_model                   |
+| screen_set                     | Update this one
+| screen_set_backup              | Backup sets logic 
+| sessions                       | nada
+| template                       | nada
+| user                           | nada
+| usergroup                      | nada
+| usergroup_location             | nada
+| usergroup_permission           | nada
+| usergroup_user                 | nada
++--------------------------------+
+Screen>_sets have ids. 
+
+ariaDB [switchboard]> SELECT * FROM channel;
++----+-----------------------------------------+----------------------+-----------+---------+
+| id | name                                    | override_schedule_id | colour_id | version |
++----+-----------------------------------------+----------------------+-----------+---------+
+|  1 | Drive Thru - Vertical - 2               |                 NULL |      NULL |       3 |
+|  3 | Coates-System                           |                 NULL |      NULL |       2 |
+|  5 | Front Counter - Horizontal - 4          |                 NULL |      NULL |       3 |
+|  8 | Front Counter BR - Horizontal -4- Combo |                 NULL |      NULL |       7 |
+|  9 | Order Status Board - Horizontal - 1     |                 NULL |      NULL |       3 |
++----+-----------------------------------------+----------------------+-----------+---------+
+
+
+-Get database info from channel (id)
+-The channel id tells us what channels the location has
+-Knowing what channels the location has, 
+I can know what name sets it has and if they are incorrect.
+-Script will be run once or on command from Ops
+
+
+ id 	 name                                         
+1	 Drive Thru - Vertical - 2                    
+3	 Coates-System                                
+4	 DT Presell - Vertical                        
+5	 Front Counter - Horizontal - 4               
+6	 Walk Up Window - Vertical - 1                
+7	 Walk Up Window - Vertical - 2                
+8	 Front Counter BR - Horizontal -4- Combo      
+9	 Order Status Board - Horizontal - 1          
+10	 Front Counter - Vertical - 3                 
+11	 Front Counter - Vertical - 4                 
+12	 Front Counter - Horizontal - 3               
+15	 Front Counter BR - Horizontal -4- Standalone 
+19	 Front Counter - Horizontal - 2               
+20	 Front Counter - Vertical - 2                 
+29	 Int Promo - Vertical                         
+30	 Front Counter - Horizontal - 5               
+31	 Drive Thu - Vertical - Single Panel - Non-OT 
+32	 Int Promo - Horizontal                       
+33	 Ext Promo - Vertical                         
+34	 Ext Promo - Horizontal                       
+35	 Front Counter - Horizontal - 1               
+37	 FC BR - H - 1                                
+38	 DT BR - V - 2                                
+42	 FC BR Combo - H - 2                          
+43	 FC BR Combo - H - 3                          
+44	 FC BR Standalone - H - 3                     

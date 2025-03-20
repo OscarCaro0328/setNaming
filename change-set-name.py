@@ -231,7 +231,19 @@ def change_db_value(id, value):
         print(f"An unexpected error occurred: {e}")
         return False
 
-
+def run_sb_package():
+    """Runs the 'switchboard package' command in a shell and returns the output."""
+    print("Running sb package,please hang tight")
+    try:
+        result = subprocess.run(
+            ["switchboard", "package"],  # Command as a list
+            text=True,                  # Ensures output is in string format
+            capture_output=True,        # Captures stdout and stderr
+            check=True                  # Raises an error if the command fails
+        )
+        return result.stdout  # Return the output of the command
+    except subprocess.CalledProcessError as e:
+        return f"Error: {e.stderr}"  # Return error message if the command fails   
 
 ############### MAIN #####################
 test_db_connection()
@@ -266,3 +278,6 @@ for i in range(len(id_list)):
         new_name = channel_name_map[channel_id_list[i]] + SET_1 + is_failover(name_list[i])
         print(f"New name would be: {new_name}" )
         change_db_value(int(id_list[i]),new_name)
+
+
+run_sb_package()

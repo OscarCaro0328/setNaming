@@ -8,39 +8,50 @@ DB_USER="root"
 DB_PASSWORD="root"  
 DB_NAME="switchboard"  
 SCREEN_SET_TABLE="screen_set"  
-CHANNEL_TABLE="channel" 
-QUERY_CHANNEL_ID="SELECT id FROM channel;"
-
-: <<'END_COMMENT'
-1	" Drive Thru - Vertical - 2"
-3	" Coates-System"
-4	" DT Presell - Vertical"
-5	" Front Counter - Horizontal - 4"
-6	" Walk Up Window - Vertical - 1"
-7	" Walk Up Window - Vertical - 2"
-8	" Front Counter BR - Horizontal -4- Combo"
-9	" Order Status Board - Horizontal - 1"
-10	" Front Counter - Vertical - 3"
-11	" Front Counter - Vertical - 4"
-12	" Front Counter - Horizontal - 3"
-15	" Front Counter BR - Horizontal -4- Standalone"
-19	" Front Counter - Horizontal - 2"
-20	" Front Counter - Vertical - 2"
-29	" Int Promo - Vertical"
-30	" Front Counter - Horizontal - 5"
-31	" Drive Thu - Vertical - Single Panel - Non-OT"
-32	" Int Promo - Horizontal"
-33	" Ext Promo - Vertical"
-34	" Ext Promo - Horizontal"
-35	" Front Counter - Horizontal - 1"
-37	" FC BR - H - 1"
-38	" DT BR - V - 2"
-42	" FC BR Combo - H - 2"
-43	" FC BR Combo - H - 3"
-44	" FC BR Standalone - H - 3"
-END_COMMENT
+QUERY="SELECT * FROM screen_set ORDER BY id;"
 
 
+# Initialize arrays
+declare -a id_array
+declare -a name_array
+declare -a channel_id_array
+
+declare -A channel_id_map
+channel_name_map["1"]="DT DNK Combo - "
+channel_name_map["4"]="DT DNK Presell - "
+channel_name_map["5"]="FC DNK - "
+channel_name_map["6"]="WUW DNK - "
+channel_name_map["7"]="WUW DNK - "
+channel_name_map["8"]="FC BR Combo - "
+channel_name_map["9"]="OSB DNK - "
+channel_name_map["10"]="FC DNK - "
+channel_name_map["11"]="FC DNK - "
+channel_name_map["12"]="FC DNK - "
+channel_name_map["15"]="FC BR Standalone - "
+channel_name_map["19"]="FC DNK - "
+channel_name_map["20"]="FC DNK - "
+channel_name_map["29"]="Int Promo DNK - "
+channel_name_map["30"]="FC DNK - "
+channel_name_map["31"]="DT DNK Non - "
+channel_name_map["32"]="Int Promo DNK - "
+channel_name_map["33"]="Ext Promo DNK - "
+channel_name_map["34"]="Ext Promo DNK - "
+channel_name_map["35"]="FC DNK - "
+channel_name_map["37"]="FC BR - "
+channel_name_map["38"]="DT BR - "
+channel_name_map["42"]="FC BR Combo - "
+channel_name_map["43"]="FC BR Combo - "
+channel_name_map["44"]="FC BR Standalone - "
+
+
+
+
+
+##----------------------- FUNCTIONS -----------------------------##
+
+
+
+function test_db_connection {
 # Test database connection
 mysql -u "$DB_USER" -p"$DB_PASSWORD" -D "$DB_NAME" -e "SELECT 1" &>/dev/null
 
@@ -49,55 +60,77 @@ if [ $? -ne 0 ]; then
     echo "Error: Unable to connect to the MySQL database. Please check your credentials and database settings."
     exit 1
 fi
-
 echo "Connected to MySQL database successfully."
+}
 
-#get data from the channel table to see what channels has the location added
-CHANNEL_ID_DATA=$(mysql -u "$DB_USER" -p"$DB_PASSWORD" -D "$DB_NAME" -e "$QUERY_CHANNEL_ID")
-#CHANNEL_DATA=$(mysql -u root -proot -D switchboard -e "SELECT * FROM channel;")
-#echo "IDs of the channels available in the location $CHANNEL_ID_DATA"
+#
 
-# Check if the query returned any data (excluding the header)
-CHANNEL_ID_DATA_NO_HEADER=$(echo "$CHANNEL_ID_DATA" | tail -n +2) #remove header.
+function query_screen_set {
+local QUERY_RESULT=$(mysql -u "$DB_USER" -p"$DB_PASSWORD" -D "$DB_NAME" -e "$QUERY")
 
-if [[ -z "$CHANNEL_ID_DATA_NO_HEADER" ]]; then
-    echo "No channel IDs found."
-    exit 0 #Exit No channels added to this location. No need to change anything.
+# Remove the header row
+local QUERY_RESULT=$(echo "$QUERY_RESULT" | tail -n +2)
+
+# Check if there are any results
+if [[ -z "$QUERY_RESULT" ]]; then
+    echo "No data found in the table. Exiting since we got nothing to change here."
+    exit 0
 fi
 
-#pending: REVIEW IF HEAD IS PRESENT IN TABLE EVEN IF NO VALUE HAVE BEEN ADDED
-
-#echo "Raw CHANNEL_ID_DATA:"
-echo "$CHANNEL_ID_DATA" 
-
-
-# Remove the header (header will always be there, data might not)
-CHANNEL_ID_DATA=$(echo "$CHANNEL_ID_DATA" | tail -n +2)
-echo "$CHANNEL_ID_DATA" 
+echo "$QUERY_RESULT"
+}
 
 
 
+function process_query_results {
+  local parameter="$1"
+  local QUERY_RESULT="$parameter"
+  # Process each row
+while IFS=$'\t' read -r id name channel_id; do
+    id_array+=("$id")
+    name_array+=("$name")
+    channel_id_array+=("$channel_id")
+done <<< "$QUERY_RESULT"
+
+# Print the arrays 
+#echo "ID Array: ${id_array[@]}"
+#echo "Name Array: ${name_array[@]}"
+#echo "Channel ID Array: ${channel_id_array[@]}"
+
+}
 
 
-#CHANNEL_DATA is a string, we need to change iot to an array
-#using newline as the delimiter
-IFS=$'\n' read -rd '' -a CHANNEL_ID_ARRAY <<< "$CHANNEL_ID_DATA"
-
-
-# Remove any empty elements (due to potential extra whitespace)
-CHANNEL_ID_ARRAY=("${CHANNEL_ID_ARRAY[@]}")
 
 
 
+test_db_connection
+data=$(query_screen_set)
+#echo "this is the query preprocessing: $data"
+process_query_results "$data"
 
-# Iterate through the array
-for id in "${CHANNEL_ID_ARRAY[@]}"; do
-  # Remove leading and trailing whitespace from each ID
-  id=$(echo "$id" | tr -d '[:space:]')
-  if [[ -n "$id" ]]; then #check if the id is not empty.
-    #echo "Channel ID: $id present in location"
-    # Perform actions with each ID here
-  fi
+
+
+
+
+
+
+
+
+
+
+
+# Example usage: Accessing related data
+for i in "${!id_array[@]}"; do
+    echo "Row ${i}: ID=${id_array[$i]}, Name=${name_array[$i]}, Channel ID=${channel_id_array[$i]}"
+   if [[ "${channel_id_array[$i]}" -eq 1 ]]; then
+    echo "Screen set belogs to a DT"
+    # Add your code here to do something
+   fi
+
 done
 
-echo "Element at index 0: ${CHANNEL_ID_ARRAY[0]}"
+
+
+
+
+

@@ -8,6 +8,39 @@ DB_NAME="your_database"  # Replace with your database name
 TABLE_NAME="your_table"  # Replace with your table name
 COLUMN_NAME="screen_set_name"  # Replace with your column name
 
+: <<'END_COMMENT'
+1	" Drive Thru - Vertical - 2"
+3	" Coates-System"
+4	" DT Presell - Vertical"
+5	" Front Counter - Horizontal - 4"
+6	" Walk Up Window - Vertical - 1"
+7	" Walk Up Window - Vertical - 2"
+8	" Front Counter BR - Horizontal -4- Combo"
+9	" Order Status Board - Horizontal - 1"
+10	" Front Counter - Vertical - 3"
+11	" Front Counter - Vertical - 4"
+12	" Front Counter - Horizontal - 3"
+15	" Front Counter BR - Horizontal -4- Standalone"
+19	" Front Counter - Horizontal - 2"
+20	" Front Counter - Vertical - 2"
+29	" Int Promo - Vertical"
+30	" Front Counter - Horizontal - 5"
+31	" Drive Thu - Vertical - Single Panel - Non-OT"
+32	" Int Promo - Horizontal"
+33	" Ext Promo - Vertical"
+34	" Ext Promo - Horizontal"
+35	" Front Counter - Horizontal - 1"
+37	" FC BR - H - 1"
+38	" DT BR - V - 2"
+42	" FC BR Combo - H - 2"
+43	" FC BR Combo - H - 3"
+44	" FC BR Standalone - H - 3"
+END_COMMENT
+                                    
+
+                  
+
+
 # Define the screen set mappings (oldValue -> newValue)
 declare -A screenSetsToUpdate=(
     ["L1"]="Lane 1"
