@@ -157,10 +157,10 @@ def create_failover_values_lists():
     Creates a list of failover values (1 or 0) based on the name_list.
 
     Args:
-        name_list: A list of names to check for failover status.
+        name_list: A list of names to check for failover sets.
 
     Returns:
-        A list of bools (1 or 0) representing failover status.
+        A list of bools (1 or 0) representing failover sets.
     """    
     failover_list = [0] * len(name_list)
     for i in range(len(name_list)):
@@ -227,11 +227,12 @@ def change_db_value(id, value):
         print(f"An unexpected error occurred: {e}")
         return False
 
+
+
 ############### MAIN #####################
 test_db_connection()
 data = query_screen_set()
 if data:
-    #print(f" query preprocessing: {data}")
     process_query_results(data)
 
 failover_list = create_failover_values_lists()
@@ -261,5 +262,3 @@ for i in range(len(id_list)):
         new_name = channel_name_map[channel_id_list[i]] + SET_1 + is_failover(name_list[i])
         print(f"New name would be: {new_name}" )
         change_db_value(int(id_list[i]),new_name)
-#    else:
-#       print(f"Unable to identify failover, not changing naming scheme in channel {channel_name_map[channel_id_list[i]]}")
