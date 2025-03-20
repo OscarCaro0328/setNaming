@@ -210,6 +210,7 @@ def get_channels_list():
 
 def run_sb_package():
     """Runs the 'switchboard package' command in a shell and returns the output."""
+    print("Running sb package,please hang tight")
     try:
         result = subprocess.run(
             ["switchboard", "package"],  # Command as a list
