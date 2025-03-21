@@ -42,7 +42,7 @@ channel_name_map = {
     "20": "FC DNK -",
     "29": "Int Promo DNK -",
     "30": "FC DNK -",
-    "31": "DT DNK Non -",
+    "31": "DT DNK Non-OT -",
     "32": "Int Promo DNK -",
     "33": "Ext Promo DNK -",
     "34": "Ext Promo DNK -",
