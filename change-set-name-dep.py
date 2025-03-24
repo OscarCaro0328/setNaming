@@ -26,7 +26,7 @@ failover_list = []
 
 # Channel ID to Name mapping
 channel_name_map = {
-    "1": "DT DNK Combo -",
+    "1": "Drive Thru - Vertical -",
     "3": "Coates-System -",
     "4": "DT DNK Presell -",
     "5": "FC DNK -",
@@ -52,6 +52,7 @@ channel_name_map = {
     "42": "FC BR Combo -",
     "43": "FC BR Combo -",
     "44": "FC BR Standalone -",
+    "45": "DT DNK-Combo -",
 }
 
 

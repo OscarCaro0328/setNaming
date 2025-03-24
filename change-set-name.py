@@ -14,6 +14,7 @@ DB_NAME = "switchboard"
 SCREEN_SET_TABLE = "screen_set"
 QUERY = "SELECT * FROM screen_set ORDER BY id;"
 
+# SET name conventions
 SET_1 = " 1 "
 SET_2 = " 2 "
 FAILOVER = "Failover"
@@ -27,7 +28,7 @@ failover_list = []
 
 # Channel ID to Name mapping
 channel_name_map = {
-    "1": "DT DNK Combo -",
+    "1": "Drive Thru - Vertical -",
     "3": "Coates-System -",
     "4": "DT DNK Presell -",
     "5": "FC DNK -",
@@ -53,6 +54,7 @@ channel_name_map = {
     "42": "FC BR Combo -",
     "43": "FC BR Combo -",
     "44": "FC BR Standalone -",
+    "45": "DT DNK-Combo -",
 }
 
 
@@ -244,6 +246,29 @@ def run_sb_package():
         return result.stdout  # Return the output of the command
     except subprocess.CalledProcessError as e:
         return f"Error: {e.stderr}"  # Return error message if the command fails   
+    
+def is_device_prime():
+    """
+    Checks if network.upstream and network.hq files are the same.
+
+    Returns:
+        True if MP is prime, False otherwise.
+    """
+    upstream_file = "/var/lib/switchboard/data/network.upstream"
+    hq_file = "/var/lib/switchboard/data/network.hq"
+
+    try:
+        with open(upstream_file, "r") as f_upstream, open(hq_file, "r") as f_hq:
+            upstream_content = f_upstream.read().strip()
+            hq_content = f_hq.read().strip()
+            return upstream_content == hq_content
+
+    except FileNotFoundError as e:
+        print(f"Error: File not found: {e.filename}")
+        return False
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        return False
 
 ############### MAIN #####################
 test_db_connection()
