@@ -190,14 +190,13 @@ def channel_failover_identified(target_channel_id):
     if len(channel_id_list) != len(failover_list):
         raise ValueError("channel_id_list and flag_list must have the same length.")
 
-    failover_found = False
+    
 
     for i in range(len(channel_id_list)):
         if channel_id_list[i] == target_channel_id and failover_list[i] == 1:
-            failover_found = True
-            break  # No need to continue searching if a 1 is found
+            return True
 
-    return failover_found    
+    return False    
 
 
 def change_db_value(id, value):
