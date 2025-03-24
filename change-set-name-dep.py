@@ -22,7 +22,6 @@ name_list = []
 channel_id_list = []
 failover_list = []
 
-#is_device_prime="$([[ "$(</var/lib/switchboard/data/network.upstream)" == "$(</var/lib/switchboard/data/network.hq)" ]] && echo true || echo false)"
 
 # Channel ID to Name mapping
 channel_name_map = {
@@ -249,8 +248,9 @@ def is_device_prime():
 
 ############### MAIN #####################
 
+#If MP is not prime, it exists with a non-error code 0.
 if not is_device_prime():
-    sys.exit("Device is not prime. Exiting.")
+    sys.exit(0) 
 
 test_db_connection()
 data = query_screen_set()
