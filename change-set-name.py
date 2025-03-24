@@ -273,6 +273,16 @@ def is_device_prime():
 ############### MAIN #####################
 
 #If MP is not prime, it exists with a non-error code 0.
+if not is_device_prime():
+    print("NOT PRIME MP. NOT EXECUTING")
+    sys.exit(0)
+
+test_db_connection()
+data = query_screen_set()
+if data:
+    process_query_results(data)
+
+failover_list = create_failover_values_lists()
 for i in range(len(id_list)):
     solution_count = count_solution_instances(channel_id_list[i])
     failover_identified = channel_failover_identified(channel_id_list[i])
