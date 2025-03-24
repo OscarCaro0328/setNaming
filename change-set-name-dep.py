@@ -256,7 +256,6 @@ if not is_device_prime():
 test_db_connection()
 data = query_screen_set()
 if data:
-    #print(f" query preprocessing: {data}")
     process_query_results(data)
 
 #get a list of failover sets
