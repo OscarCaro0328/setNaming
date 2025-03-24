@@ -3,7 +3,7 @@
 
 
 
-
+import sys
 import subprocess
 import re
 
@@ -271,6 +271,12 @@ def is_device_prime():
         return False
 
 ############### MAIN #####################
+
+#If MP is not prime, it exists with a non-error code 0.
+if not is_device_prime():
+    print("NOT PRIME MP. NOT EXECUTING")
+    sys.exit(0)
+
 test_db_connection()
 data = query_screen_set()
 if data:
@@ -290,7 +296,7 @@ for i in range(len(id_list)):
             new_name = channel_name_map[channel_id_list[i]] + SET_1
             print(f"New name would be: {new_name}")
             change_db_value(int(id_list[i]),new_name)
-            # Here goes the sql line to change name. 
+             
         except KeyError:
             print(f"Error: Channel ID '{channel_id_list[i]}' not found in channel_name_map.Skipping this value")
             # Skip the SQL update, Value not found
@@ -305,4 +311,4 @@ for i in range(len(id_list)):
         change_db_value(int(id_list[i]),new_name)
 
 
-run_sb_package()
+run_sb_package() #Prime media players will update slaves.
