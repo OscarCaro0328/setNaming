@@ -283,11 +283,13 @@ if data:
     process_query_results(data)
 
 failover_list = create_failover_values_lists()
+
+#NAME CREATION
 for i in range(len(id_list)):
+    #Prints the 3 values from each row of the screen_set table (for testing)
+    print(f"""ID={id_list[i]}, Name={name_list[i]}, Channel ID={channel_id_list[i]}, solution count {count_solution_instances(channel_id_list[i])}, failover_identified: {channel_failover_identified(channel_id_list[i])}""")
     solution_count = count_solution_instances(channel_id_list[i])
     failover_identified = channel_failover_identified(channel_id_list[i])
-    print(f"solution_count {solution_count}")
-    print(f"sfailover_identified {failover_identified}")
 
     match (solution_count, failover_identified):
         case (1, _):
