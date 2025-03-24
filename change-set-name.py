@@ -273,48 +273,28 @@ def is_device_prime():
 ############### MAIN #####################
 
 #If MP is not prime, it exists with a non-error code 0.
-if not is_device_prime():
-    print("NOT PRIME MP. NOT EXECUTING")
-    sys.exit(0)
-
-test_db_connection()
-data = query_screen_set()
-if data:
-    process_query_results(data)
-
-failover_list = create_failover_values_lists()
-
-#Name creation
 for i in range(len(id_list)):
-    
-    #Prints the 3 values from each row of the screen_set table (for testing)
-    #print(f"""ID={id_list[i]}, Name={name_list[i]}, Channel ID={channel_id_list[i]}, solution count {count_solution_instances(channel_id_list[i])}, failover_identified: {channel_failover_identified(channel_id_list[i])}""")
+    solution_count = count_solution_instances(channel_id_list[i])
+    failover_identified = channel_failover_identified(channel_id_list[i])
 
-    #If a channel has only one occurance, no failover or set 2 possible, name changing for sure
-    if count_solution_instances(channel_id_list[i]) == 1:
-        try:
-            new_name = channel_name_map[channel_id_list[i]] + SET_1
+    match (solution_count, failover_identified):
+        case (1, _):
+            try:
+                new_name = channel_name_map[channel_id_list[i]] + SET_1
+                print(f"New name would be: {new_name}")
+                change_db_value(int(id_list[i]), new_name)
+            except KeyError:
+                print(f"Error: Channel ID '{channel_id_list[i]}' not found in channel_name_map. Skipping this value")
+        case (2, True):
+            new_name = channel_name_map[channel_id_list[i]] + SET_1 + is_failover(name_list[i])
             print(f"New name would be: {new_name}")
-            change_db_value(int(id_list[i]),new_name)
-             
-        except KeyError:
-            print(f"Error: Channel ID '{channel_id_list[i]}' not found in channel_name_map.Skipping this value")
-            # Skip the SQL update, Value not found
-
-
-    #If a channel has 2 occurances one set will be primary and the other one Failover
-    #If we are not able to identify failover channel, we will skip name changing in this channel
-    # This is to avoid both sets being named the same in a channel. 
-    if count_solution_instances(channel_id_list[i]) == 2 and channel_failover_identified(channel_id_list[i]):
-        new_name = channel_name_map[channel_id_list[i]] + SET_1 + is_failover(name_list[i])
-        print(f"New name would be: {new_name}" )
-        change_db_value(int(id_list[i]),new_name)
-
-    #logic is still pending
-    if count_solution_instances(channel_id_list[i]) == 4 and channel_failover_identified(channel_id_list[i]):
-        new_name = channel_name_map[channel_id_list[i]] + SET_2 + is_failover(name_list[i])
-        print(f"New name would be: {new_name}" )
-        
+            change_db_value(int(id_list[i]), new_name)
+        case (4, True):
+            new_name = channel_name_map[channel_id_list[i]] + SET_2 + is_failover(name_list[i])
+            print(f"New name would be: {new_name}")
+            change_db_value(int(id_list[i]), new_name)
+        case _:
+            pass  # Handle other cases or do nothing
 
 
 run_sb_package() #Prime media players will update slaves.
