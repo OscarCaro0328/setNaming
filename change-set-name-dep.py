@@ -250,6 +250,7 @@ def is_device_prime():
 
 #If MP is not prime, it exists with a non-error code 0.
 if not is_device_prime():
+    print("NOT PRIME MP. NOT EXECUTING")
     sys.exit(0) 
 
 test_db_connection()
