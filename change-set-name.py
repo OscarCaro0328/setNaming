@@ -270,6 +270,33 @@ def is_device_prime():
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
         return False
+    
+def lane1_lane2_identifier(input_string):
+    """
+    Identifies if a string contains variations of "Lane 1" or "Lane 2",
+    regardless of order or location within the string.
+
+    Args:
+        input_string: The string to search.
+
+    Returns:
+        "Lane 1" if the string contains variations of "Lane 1",
+        "Lane 2" if the string contains variations of "Lane 2",
+        None otherwise.
+    """
+    if not isinstance(input_string, str):
+        return None  # Handle non-string input
+
+    lane1_pattern = r"[Ll][Aa][Nn][Ee]\s*1"
+    lane2_pattern = r"[Ll][Aa][Nn][Ee]\s*2"
+
+    if re.search(lane1_pattern, input_string):
+        return "Lane 1"
+    elif re.search(lane2_pattern, input_string):
+        return "Lane 2"
+    else:
+        return "Not Identified"
+
 
 ############### MAIN #####################
 
@@ -317,11 +344,20 @@ for i in range(len(id_list)):
             change_db_value(int(id_list[i]), new_name) if new_name != name_list[i] else print("Old name is equal to new name. NOT CHANGING")
 
 
-        # logic is still pending
+        # If a channel has 4 occurences, most likely it is a 2 Lane Drive Thru.
+        # If we are able to identify Lane 1 and Lane 2. We change their values
+        # Otherwise we leave it as is.
         if number_of_instances == 4 and failover_identified:
-            new_name = set_name_standard + SET_2 + is_failover(name_list[i])
+            lane = lane1_lane2_identifier(name_list[i])
+            if lane == "Lane 1":
+                new_name = set_name_standard + SET_1 + is_failover(name_list[i])
+            elif lane == "Lane 2":
+                new_name = set_name_standard + SET_2 + is_failover(name_list[i])
+            else:
+                new_name = name_list[i] #Not changing anything.
+                print("Lane 1 or Lane 2 not identified, name not changing.")
             print(f"New name would be: {new_name}")
-            change_db_value(int(id_list[i]), new_name) if new_name != name_list[i] else None
+            change_db_value(int(id_list[i]), new_name) if new_name != name_list[i] else print("Old name is equal to new name. NOT CHANGING")
 
     except KeyError:
         print(f"Error: Channel ID '{channel_id_list[i]}' not found in channel_name_map. Skipping this value")
