@@ -174,7 +174,7 @@ def create_failover_values_lists():
             failover_list[i] = 1
     return failover_list
 
-
+    #
 def channel_failover_identifier(target_channel_id):
     """
     Checks if a the target_channel has a positively identified failover set.
@@ -233,6 +233,7 @@ def change_db_value(id, value):
         print(f"An unexpected error occurred: {e}")
         return False
 
+    #Sb package is needed to updated db information on slaves
 def run_sb_package():
     """Runs the 'switchboard package' command in a shell and returns the output."""
     print("Running sb package,please hang tight")
@@ -325,7 +326,7 @@ for i in range(len(id_list)):
     except KeyError:
         print(f"Error: Channel ID '{channel_id_list[i]}' not found in channel_name_map. Skipping this value")
     
-    print("-" * 40)  # Prints 40 dashes   
+    print("-" * 40)  # Prints 40 dashes for formatting purposes  
         
 
 
