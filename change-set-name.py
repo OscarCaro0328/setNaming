@@ -318,7 +318,7 @@ for i in range(len(id_list)):
 
 
         # logic is still pending
-        if number_of_instances == 4 and failover_identified:
+        if number_of_instances == 10 and failover_identified:
             new_name = set_name_standard + SET_2 + is_failover(name_list[i])
             print(f"New name would be: {new_name}")
             change_db_value(int(id_list[i]), new_name) if new_name != name_list[i] else None
