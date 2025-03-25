@@ -305,5 +305,7 @@ for i in range(len(id_list)):
             
         except KeyError:
             print(f"Error: Channel ID '{channel_id_list[i]}' not found in channel_name_map. Skipping this value")
+            
+    print("-" * 40)  # Prints 40 dashes 
 
 run_sb_package()
