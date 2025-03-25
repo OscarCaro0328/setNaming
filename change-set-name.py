@@ -297,7 +297,9 @@ for i in range(len(id_list)):
         # If a channel has only one occurrence, no failover or set 2 possible, name changing for sure
         if number_of_instances == 1:
             new_name = set_name_standard + SET_1
-            print(f"New name changing to: {new_name}")
+            print(f"New name would be: {new_name}")
+            #change_db_value(int(id_list[i]), new_name) if new_name != name_list[i] else None
+            change_db_value(int(id_list[i]), new_name) if new_name != name_list[i] else print("Old name is equal to new name. NOT CHANGING")
             #change_db_value(int(id_list[i]), new_name)
 
         # If a channel has 2 occurrences one set will be primary and the other one Failover
@@ -305,13 +307,16 @@ for i in range(len(id_list)):
         # This is to avoid both sets being named the same in a channel.
         if number_of_instances == 2 and failover_identified:
             new_name = set_name_standard + SET_1 + is_failover(name_list[i])
-            print(f"New name changing to: {new_name}")
-            #change_db_value(int(id_list[i]), new_name)
+            print(f"New name would be: {new_name}")
+            #change_db_value(int(id_list[i]), new_name) if new_name != name_list[i] else None
+            change_db_value(int(id_list[i]), new_name) if new_name != name_list[i] else print("Old name is equal to new name. NOT CHANGING")
+            #
 
         # logic is still pending
         if number_of_instances == 4 and failover_identified:
             new_name = set_name_standard + SET_2 + is_failover(name_list[i])
-            print(f"New name changing to: {new_name}")
+            print(f"New name would be: {new_name}")
+            change_db_value(int(id_list[i]), new_name) if new_name != name_list[i] else None
 
     except KeyError:
         print(f"Error: Channel ID '{channel_id_list[i]}' not found in channel_name_map. Skipping this value")
