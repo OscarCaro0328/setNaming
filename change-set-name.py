@@ -288,7 +288,7 @@ failover_list = create_failover_values_lists()
 for i in range(len(id_list)):
     
     #Prints the 3 values from each row of the screen_set table (for testing)
-    #print(f"""ID={id_list[i]}, Name={name_list[i]}, Channel ID={channel_id_list[i]}, solution count {count_solution_instances(channel_id_list[i])}, failover_identified: {channel_failover_identified(channel_id_list[i])}""")
+    print(f"""ID={id_list[i]}, Name={name_list[i]}, Channel ID={channel_id_list[i]}, solution count {count_solution_instances(channel_id_list[i])}, failover_identified: {channel_failover_identified(channel_id_list[i])}""")
 
     #If a channel has only one occurance, no failover or set 2 possible, name changing for sure
     if count_solution_instances(channel_id_list[i]) == 1:
