@@ -290,23 +290,27 @@ for i in range(len(id_list)):
     print(f"""ID={id_list[i]}, Name={name_list[i]}, Channel ID={channel_id_list[i]}, solution count {count_solution_instances(channel_id_list[i])}, failover_identified: {channel_failover_identified(channel_id_list[i])}""")
 
     try:
+        number_of_instances = count_solution_instances(channel_id_list[i])
+        failover_identified = channel_failover_identified(channel_id_list[i])
+        set_name_standard = channel_name_map[channel_id_list[i]]
+
         # If a channel has only one occurrence, no failover or set 2 possible, name changing for sure
-        if count_solution_instances(channel_id_list[i]) == 1:
-            new_name = channel_name_map[channel_id_list[i]] + SET_1
+        if number_of_instances == 1:
+            new_name = set_name_standard + SET_1
             print(f"New name changing to: {new_name}")
             change_db_value(int(id_list[i]), new_name)
 
         # If a channel has 2 occurrences one set will be primary and the other one Failover
         # If we are not able to identify failover channel, we will skip name changing in this channel
         # This is to avoid both sets being named the same in a channel.
-        if count_solution_instances(channel_id_list[i]) == 2 and channel_failover_identified(channel_id_list[i]):
-            new_name = channel_name_map[channel_id_list[i]] + SET_1 + is_failover(name_list[i])
+        if number_of_instances == 2 and failover_identified:
+            new_name = set_name_standard + SET_1 + is_failover(name_list[i])
             print(f"New name changing to: {new_name}")
             change_db_value(int(id_list[i]), new_name)
 
         # logic is still pending
-        if count_solution_instances(channel_id_list[i]) == 4 and channel_failover_identified(channel_id_list[i]):
-            new_name = channel_name_map[channel_id_list[i]] + SET_2 + is_failover(name_list[i])
+        if number_of_instances == 4 and failover_identified:
+            new_name = set_name_standard + SET_2 + is_failover(name_list[i])
             print(f"New name changing to: {new_name}")
 
     except KeyError:
