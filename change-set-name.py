@@ -294,7 +294,7 @@ for i in range(len(id_list)):
     f"solution count {count_solution_instances(channel_id_list[i])}, "
     f"failover_identified: {channel_failover_identifier(channel_id_list[i])}"
         )
-    print("-" * 40)  # Prints 40 dashes
+    
     try:
         number_of_instances = count_solution_instances(channel_id_list[i])
         failover_identified = channel_failover_identifier(channel_id_list[i])
@@ -324,7 +324,8 @@ for i in range(len(id_list)):
 
     except KeyError:
         print(f"Error: Channel ID '{channel_id_list[i]}' not found in channel_name_map. Skipping this value")
-        
+    
+    print("-" * 40)  # Prints 40 dashes   
         
 
 
