@@ -25,7 +25,7 @@ failover_list = []
 
 # Channel ID to Name mapping
 channel_name_map = {
-    "1": "Drive Thru - Vertical -",
+    "1": "Drive Thru -",
     "3": "Coates-System -",
     "4": "DT DNK Presell -",
     "5": "FC DNK -",
@@ -305,7 +305,7 @@ for i in range(len(id_list)):
             
         except KeyError:
             print(f"Error: Channel ID '{channel_id_list[i]}' not found in channel_name_map. Skipping this value")
-            
+
     print("-" * 40)  # Prints 40 dashes 
 
 run_sb_package()
