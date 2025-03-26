@@ -26,8 +26,8 @@ name_list = []
 channel_id_list = []
 failover_list = []
 
-# Channel ID to Name mapping
-channel_name_map = {
+# Channel ID to Name mapping for us.dunkindonuts.switchboardcms.com
+channel_name_map_dunkin_prod = {
     "1": "Drive Thru -",
     "3": "Coates-System -",
     "4": "DT DNK Presell -",
@@ -326,7 +326,7 @@ for i in range(len(id_list)):
     try:
         number_of_instances = count_solution_instances(channel_id_list[i])
         failover_identified = channel_failover_identifier(channel_id_list[i])
-        set_name_standard = channel_name_map[channel_id_list[i]]
+        set_name_standard = channel_name_map_dunkin_prod[channel_id_list[i]]
 
         # If a channel has only one occurrence, no failover or set 2 possible, name changing for sure
         if number_of_instances == 1:
@@ -360,7 +360,7 @@ for i in range(len(id_list)):
             change_db_value(int(id_list[i]), new_name) if new_name != name_list[i] else print("Old name is equal to new name. NOT CHANGING")
 
     except KeyError:
-        print(f"Error: Channel ID '{channel_id_list[i]}' not found in channel_name_map. Skipping this value")
+        print(f"Error: Channel ID '{channel_id_list[i]}' not found in channel_name_map_dunkin_prod. Skipping this value")
     
     print("-" * 40)  # Prints 40 dashes for formatting purposes  
         
