@@ -26,6 +26,13 @@ name_list = []
 channel_id_list = []
 failover_list = []
 
+#Domains in which implementation is defined
+DUNKIN_PROD = "us.dunkindonuts.switchboardcms.com"
+DUNKIN_QA_UAT = "us-dunkindonuts-qa.uat.switchboardcms.com"
+DOMAIN_FILE_PATH = "/var/lib/switchboard/data/domain.name"
+channel_name_map = {}
+
+
 # Channel ID to Name mapping for us.dunkindonuts.switchboardcms.com
 channel_name_map_dunkin_prod = {
     "1": "Drive Thru -",
@@ -57,9 +64,78 @@ channel_name_map_dunkin_prod = {
     "45": "DT DNK-Combo -",
 }
 
+# Channel_id to Name mapping for us-dunkindonuts-qa.uat.switchboardcms.com
+channel_name_map_dunkin_qa_uat = {
+    "1" : "Drive Thru - Vertical -",
+    "2" : "DT DNK Presell -",
+    "3" : "WUW DNK - V -",
+    "5" : "Coates-System -",
+    "6" : "FC DNK - V -",
+    "7" : "FC DNK - V -",
+    "8" : "FC DNK- H -",
+    "9" : "FC DNK- H -",
+    "10" : "OSB DNK - H -",
+    "11" : "Int Promo DNK -",
+    "12" : "FC BR Combo - H -",
+    "13" : "WUW DNK - V -",
+    "14" : "Logos -",
+    "15" : "FC BR Standalone - H -",
+    "16" : "FC DNK - V -",
+    "17" : "Int Promo DNK -",
+    "18" : "FC DNK- H -",
+    "19" : "Ext Promo DNK -",
+    "20" : "Ext Promo DNK -",
+    "21" : "FC DNK- H -",
+    "22" : "FC DNK- H -",
+    "23" : "FC BR - H -",
+    "24" : "DT BR - V -",
+    "26" : "Front Counter BR - Horizontal - 4 -",
+    "27" : "Front Counter BR - Horiz - 4 -",
+    "29" : "FC BR Combo - H -",
+    "30" : "FC BR Combo - H -",
+    "31" : "FC BR Standalone - H -",
+    "32" : "DT DNK Non-OT - V -",
+    "33" : "DT DNK Combo - V -",
+    "34" : "Smithfields -",
+    "35" : "content test -",
+    "36" : "Albert - test - Horizontal -",
+}
 
 
-# ----------------------- FUNCTIONS -----------------------------
+
+# --------------------------------FUNCTIONS -----------------------------
+
+def define_current_domain():
+    """
+    Defines the domain of the mp based on /var/lib/switchboard/data/domain.name 
+    """
+    try:
+        with open(DOMAIN_FILE_PATH, "r") as file:
+            domain_name = file.read().strip()  # Read and remove leading/trailing whitespace
+
+        if domain_name == DUNKIN_PROD:
+            print("Production environment detected.")
+            print("Using production values for the channels.")
+            channel_name_map = channel_name_map_dunkin_prod
+            
+        elif domain_name == DUNKIN_QA_UAT:
+            # Perform actions for QA/UAT environment
+            print("QA/UAT environment detected.")
+            print("Using QA/UAT values for the channels.")
+            channel_name_map = channel_name_map_dunkin_qa_uat
+            
+        else:
+            print(f"Domain : {domain_name} not implemented. Names can not be changed")
+            sys.exit(0)
+            
+
+    except FileNotFoundError:
+        print(f"Error: File not found at {DOMAIN_FILE_PATH}. Unable to define domain")
+        sys.exit(1)
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        sys.exit(1)
+
 
 
 def test_db_connection():
@@ -305,8 +381,12 @@ if not is_device_prime():
     print("NOT PRIME MP. NOT EXECUTING")
     sys.exit(0)
 
+define_current_domain()
+
 test_db_connection()
+
 data = query_screen_set()
+
 if data:
     process_query_results(data)
 
@@ -326,13 +406,13 @@ for i in range(len(id_list)):
     try:
         number_of_instances = count_solution_instances(channel_id_list[i])
         failover_identified = channel_failover_identifier(channel_id_list[i])
-        set_name_standard = channel_name_map_dunkin_prod[channel_id_list[i]]
+        set_name_standard = channel_name_map[channel_id_list[i]]
 
         # If a channel has only one occurrence, no failover or set 2 possible, name changing for sure
         if number_of_instances == 1:
             new_name = set_name_standard + SET_1
             print(f"New name would be: {new_name}")
-            change_db_value(int(id_list[i]), new_name) if new_name != name_list[i] else print("Old name is equal to new name. NOT CHANGING")
+            #change_db_value(int(id_list[i]), new_name) if new_name != name_list[i] else print("Old name is equal to new name. NOT CHANGING")
             
 
         # If a channel has 2 occurrences one set will be primary and the other one Failover
@@ -341,7 +421,7 @@ for i in range(len(id_list)):
         if number_of_instances == 2 and failover_identified:
             new_name = set_name_standard + SET_1 + is_failover(name_list[i])
             print(f"New name would be: {new_name}")
-            change_db_value(int(id_list[i]), new_name) if new_name != name_list[i] else print("Old name is equal to new name. NOT CHANGING")
+            #change_db_value(int(id_list[i]), new_name) if new_name != name_list[i] else print("Old name is equal to new name. NOT CHANGING")
 
 
         # If a channel has 4 occurences, most likely it is a 2 Lane Drive Thru.
@@ -357,7 +437,7 @@ for i in range(len(id_list)):
                 new_name = name_list[i] #Not changing anything.
                 print("Lane 1 or Lane 2 not identified, name not changing.")
             print(f"New name would be: {new_name}")
-            change_db_value(int(id_list[i]), new_name) if new_name != name_list[i] else print("Old name is equal to new name. NOT CHANGING")
+            #change_db_value(int(id_list[i]), new_name) if new_name != name_list[i] else print("Old name is equal to new name. NOT CHANGING")
 
     except KeyError:
         print(f"Error: Channel ID '{channel_id_list[i]}' not found in channel_name_map_dunkin_prod. Skipping this value")
