@@ -109,6 +109,7 @@ def define_current_domain():
     """
     Defines the domain of the mp based on /var/lib/switchboard/data/domain.name 
     """
+    global channel_name_map
     try:
         with open(DOMAIN_FILE_PATH, "r") as file:
             domain_name = file.read().strip()  # Read and remove leading/trailing whitespace
