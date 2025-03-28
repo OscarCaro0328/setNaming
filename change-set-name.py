@@ -120,7 +120,6 @@ def define_current_domain():
             channel_name_map = channel_name_map_dunkin_prod
             
         elif domain_name == DUNKIN_QA_UAT:
-            # Perform actions for QA/UAT environment
             print("QA/UAT environment detected.")
             print("Using QA/UAT values for the channels.")
             channel_name_map = channel_name_map_dunkin_qa_uat
@@ -149,7 +148,7 @@ def test_db_connection():
         print(
             f"Error: Unable to connect to the MySQL database. Please check your credentials and database settings. {e}"
         )
-        exit(1)
+        sys.exit(1)
 
 
 def query_screen_set():
@@ -169,7 +168,7 @@ def query_screen_set():
         
         if not lines:  # Check if empty
             print("No data found in the table. Exiting since we got nothing to change here.")
-            exit(0)
+            sys.exit(0)
 
         return lines  # Return list 
     except subprocess.CalledProcessError as e:
@@ -393,6 +392,8 @@ if data:
 
 failover_list = create_failover_values_lists()
 
+print("-" * 40)  # Prints 40 dashes for formatting purposes 
+
 # Name creation
 for i in range(len(id_list)):
     # Prints the 3 values from each row of the screen_set table (for testing)
@@ -413,7 +414,7 @@ for i in range(len(id_list)):
         if number_of_instances == 1:
             new_name = set_name_standard + SET_1
             print(f"New name would be: {new_name}")
-            #change_db_value(int(id_list[i]), new_name) if new_name != name_list[i] else print("Old name is equal to new name. NOT CHANGING")
+            change_db_value(int(id_list[i]), new_name) if new_name != name_list[i] else print("Old name is equal to new name. NOT CHANGING")
             
 
         # If a channel has 2 occurrences one set will be primary and the other one Failover
@@ -422,7 +423,7 @@ for i in range(len(id_list)):
         if number_of_instances == 2 and failover_identified:
             new_name = set_name_standard + SET_1 + is_failover(name_list[i])
             print(f"New name would be: {new_name}")
-            #change_db_value(int(id_list[i]), new_name) if new_name != name_list[i] else print("Old name is equal to new name. NOT CHANGING")
+            change_db_value(int(id_list[i]), new_name) if new_name != name_list[i] else print("Old name is equal to new name. NOT CHANGING")
 
 
         # If a channel has 4 occurences, most likely it is a 2 Lane Drive Thru.
@@ -438,7 +439,7 @@ for i in range(len(id_list)):
                 new_name = name_list[i] #Not changing anything.
                 print("Lane 1 or Lane 2 not identified, name not changing.")
             print(f"New name would be: {new_name}")
-            #change_db_value(int(id_list[i]), new_name) if new_name != name_list[i] else print("Old name is equal to new name. NOT CHANGING")
+            change_db_value(int(id_list[i]), new_name) if new_name != name_list[i] else print("Old name is equal to new name. NOT CHANGING")
 
     except KeyError:
         print(f"Error: Channel ID '{channel_id_list[i]}' not found in channel_name_map_dunkin_prod. Skipping this value")
