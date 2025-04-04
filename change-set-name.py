@@ -207,7 +207,7 @@ def is_failover(input_string):
     r"\b("
     r"fail[\s\-/]*o[\s\-/]*v[\s\-/]*e?r|"  # Handles different spacing variations of "failover"
     r"fo|failvover|faiolver|failolver|faiover|faover|"
-    r"faillover|feilover|failove|failver|faillover|failover|backup|"
+    r"faillover|feilover|failove|failver|faillover|fail over|fail|failover|backup|"
     r"filover|failoverbak|falover|failovr|failloverr|failovered|"
     r"failovering|failaover|failvoer|Set 2"
     r")\b|failover\b|failover\w+"
