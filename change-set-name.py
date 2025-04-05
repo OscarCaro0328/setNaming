@@ -416,8 +416,7 @@ for i in range(len(data_object["id_list"])):
         # Values in DB are always in order by creation
         # First 2 are first lane, second 2 are second lane.
         if number_of_instances == 4:
-            if this_channel_ID == data_object['name_list'][i-1]:
-                set_count += 1
+            set_count += 1
 
             if set_count == 1:
                 new_name = set_name_standard + SET_1 
