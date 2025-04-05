@@ -28,7 +28,8 @@ UPSTREAM_FILE_PATH = "/var/lib/switchboard/data/network.upstream"
 HQ_FILE_PATH = "/var/lib/switchboard/data/network.hq"
 channel_name_map = {}
 
-
+#auxiliars
+set_count = 0
 
 
 # Channel ID to Name mapping for us.dunkindonuts.switchboardcms.com
@@ -358,11 +359,6 @@ def is_device_prime(upstream_file_path, hq_file_path):
 
 
 
-def set_counter(): #this needs to be modified
-    #result += 1
-    #return result
-    return 0 
-
 
 ################################### MAIN ########################################
 
@@ -372,9 +368,7 @@ if not is_device_prime(UPSTREAM_FILE_PATH, HQ_FILE_PATH):
     sys.exit(0)
 
 define_current_domain(DOMAIN_FILE_PATH)
-
 test_db_connection()
-
 data = query_screen_set()
 
 if data:
@@ -422,12 +416,18 @@ for i in range(len(data_object["id_list"])):
         # Values in DB are always in order by creation
         # First 2 are first lane, second 2 are second lane.
         if number_of_instances == 4:
-            set_count = 0
-            #set_counter()  
-            if set_count <= 2:
-                new_name = set_name_standard + SET_1 + is_failover(this_name)  
-            else :
-                new_name = set_name_standard + SET_2 + is_failover(this_name)  
+            if this_channel_ID == data_object['name_list'][i-1]:
+                set_count += 1
+
+            if set_count == 1:
+                new_name = set_name_standard + SET_1 
+            elif set_count == 2:
+                new_name = set_name_standard + SET_1 + FAILOVER  
+            elif set_count == 3:
+                new_name = set_name_standard + SET_2 
+            elif set_count == 4:
+                new_name = set_name_standard + SET_2 + FAILOVER
+                set_count = 0  # Reset the counter for the next channel
 
         
         print(f"New name would be: {new_name}")
