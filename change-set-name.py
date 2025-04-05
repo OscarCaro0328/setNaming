@@ -12,7 +12,7 @@ DB_USER = "root"
 DB_PASSWORD = "root"
 DB_NAME = "switchboard"
 SCREEN_SET_TABLE = "screen_set"
-QUERY = "SELECT * FROM screen_set ORDER BY id;"
+QUERY = "SELECT * FROM screen_set ORDER BY channel_id;"
 
 # SET name conventions
 SET_1 = " 1 "
@@ -20,12 +20,7 @@ SET_2 = " 2 "
 FAILOVER = "Failover"
 NOT_FAILOVER = ""
 
-# Initialize lists
-id_list = []
-name_list = []
-channel_id_list = []
-failover_list = []
-
+# Constants
 #Domains in which implementation is defined
 DUNKIN_PROD = "us.dunkindonuts.switchboardcms.com"
 DUNKIN_QA_UAT = "us-dunkindonuts-qa.uat.switchboardcms.com"
@@ -183,17 +178,23 @@ def process_query_results(query_result):
     Args: 
         query_result: Values returned from querying screen_set
     Returns:
-        3 lists (id_list, name_list, channel_id_list) containing all the values in  
+        an object with 3 lists (id_list, name_list, channel_id_list) containing all the values in  
         id | name            | channel_id |  
     """
+    data_object = {
+        "id_list": [],
+        "name_list": [],
+        "channel_id_list": []
+    }
+
     if query_result:
         for line in query_result:  # Iterate over list
             parts = line.split("\t")
             if len(parts) == 3:
-                id_list.append(parts[0])
-                name_list.append(parts[1])
-                channel_id_list.append(parts[2])
-
+                data_object["id_list"].append(parts[0])
+                data_object["name_list"].append(parts[1])
+                data_object["channel_id_list"].append(parts[2])
+    return data_object
 
 
 
@@ -221,7 +222,7 @@ def is_failover(input_string):
 
 
 
-def count_solution_instances(channel_id_value):
+def count_solution_instances(channel_id_value,channel_id_list):
     """
     Counts occurrences of a solution value (channel_id).
 
@@ -235,7 +236,7 @@ def count_solution_instances(channel_id_value):
     return count
 
 
-def create_failover_values_lists():
+def create_failover_values_lists(name_list):
     """
     Creates a list of failover values (1 or 0) based on the name_list.
 
@@ -252,7 +253,7 @@ def create_failover_values_lists():
     return failover_list
 
     #
-def channel_failover_identifier(target_channel_id):
+def channel_failover_identifier(target_channel_id, channel_id_list, failover_list):
     """
     Checks if a the target_channel has a positively identified failover set.
 
@@ -348,7 +349,7 @@ def is_device_prime():
         print(f"An unexpected error occurred: {e}")
         return False
     
-def lane1_lane2_identifier(input_string):
+def lane1_lane2_identifier(input_string): #this needs to be modified
     """
     Identifies if a string contains variations of "Lane 1" or "Lane 2",
     regardless of order or location within the string.
@@ -389,63 +390,66 @@ test_db_connection()
 data = query_screen_set()
 
 if data:
-    process_query_results(data)
+    data_object= process_query_results(data)
 
-failover_list = create_failover_values_lists()
+failover_list = create_failover_values_lists(data_object['name_list']) 
 
 print("-" * 40)  # Prints 40 dashes for formatting purposes 
 
 # Name creation
-for i in range(len(id_list)):
-    # Prints the 3 values from each row of the screen_set table (for testing)
+for i in range(len(data_object["id_list"])): 
+    # Prints current values
+    this_id=data_object['id_list'][i]
+    this_name = data_object['name_list'][i]
+    this_channel_ID=data_object['channel_id_list'][i]
+    number_of_instances = count_solution_instances(this_channel_ID, data_object['channel_id_list'])  
+    failover_identified = channel_failover_identifier(this_channel_ID, data_object['channel_id_list'], failover_list) 
+
     print(
-    f"ID={id_list[i]}, "
-    f"Name={name_list[i]}, "
-    f"Channel ID={channel_id_list[i]}, "
-    f"solution count {count_solution_instances(channel_id_list[i])}, "
-    f"failover_identified: {channel_failover_identifier(channel_id_list[i])}"
-        )
-    
+        f"ID={this_id}, "  
+        f"Name={this_name}, "  
+        f"Channel ID={this_channel_ID}, "  
+        f"solution count {count_solution_instances(this_channel_ID)}, "  
+        f"failover_identified: {channel_failover_identifier(this_channel_ID,)}"  
+    )
+
     try:
-        number_of_instances = count_solution_instances(channel_id_list[i])
-        failover_identified = channel_failover_identifier(channel_id_list[i])
-        set_name_standard = channel_name_map[channel_id_list[i]]
+ 
+        set_name_standard = channel_name_map[this_channel_ID] 
 
         # If a channel has only one occurrence, no failover or set 2 possible, name changing for sure
         if number_of_instances == 1:
             new_name = set_name_standard + SET_1
             print(f"New name would be: {new_name}")
-            change_db_value(int(id_list[i]), new_name) if new_name != name_list[i] else print("Old name is equal to new name. NOT CHANGING")
-            
+            # change_db_value(int(id_list[i]), new_name) if new_name != name_list[i] else print("Old name is equal to new name. NOT CHANGING")
 
         # If a channel has 2 occurrences one set will be primary and the other one Failover
         # If we are not able to identify failover channel, we will skip name changing in this channel
         # This is to avoid both sets being named the same in a channel.
         if number_of_instances == 2 and failover_identified:
-            new_name = set_name_standard + SET_1 + is_failover(name_list[i])
+            new_name = set_name_standard + SET_1 + is_failover(this_name)  
             print(f"New name would be: {new_name}")
-            change_db_value(int(id_list[i]), new_name) if new_name != name_list[i] else print("Old name is equal to new name. NOT CHANGING")
-
+            # change_db_value(int(id_list[i]), new_name) if new_name != name_list[i] else print("Old name is equal to new name. NOT CHANGING")
 
         # If a channel has 4 occurences, most likely it is a 2 Lane Drive Thru.
         # If we are able to identify Lane 1 and Lane 2. We change their values
         # Otherwise we leave it as is.
-        if number_of_instances == 4 and failover_identified:
-            lane = lane1_lane2_identifier(name_list[i])
+        if number_of_instances == 4:
+            lane = lane1_lane2_identifier(this_name)  
             if lane == "Lane 1":
-                new_name = set_name_standard + SET_1 + is_failover(name_list[i])
+                new_name = set_name_standard + SET_1 + is_failover(this_name)  
             elif lane == "Lane 2":
-                new_name = set_name_standard + SET_2 + is_failover(name_list[i])
+                new_name = set_name_standard + SET_2 + is_failover(this_name)  
             else:
-                new_name = name_list[i] #Not changing anything.
+                new_name = this_name  # Not changing anything. 
                 print("Lane 1 or Lane 2 not identified, name not changing.")
             print(f"New name would be: {new_name}")
-            change_db_value(int(id_list[i]), new_name) if new_name != name_list[i] else print("Old name is equal to new name. NOT CHANGING")
+            # change_db_value(int(id_list[i]), new_name) if new_name != name_list[i] else print("Old name is equal to new name. NOT CHANGING")
 
     except KeyError:
-        print(f"Error: Channel ID '{channel_id_list[i]}' not found in channel_name_map_dunkin_prod. Skipping this value")
-    
-    print("-" * 40)  # Prints 40 dashes for formatting purposes  
+        print(f"Error: Channel ID '{this_channel_ID}' not found in channel_name_map. Skipping this value")  
+
+    print("-" * 40)  # Prints 40 dashes for formatting purposes
         
 
 
