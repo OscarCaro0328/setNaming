@@ -356,8 +356,9 @@ def is_device_prime(upstream_file_path, hq_file_path):
     
 def set_counter(): #this needs to be modified
 
-    result += 1
-    return result
+    #result += 1
+    #return result
+    return 0 
 
 
 ################################### MAIN ################################
@@ -420,7 +421,7 @@ for i in range(len(data_object["id_list"])):
         # First 2 are first lane, second 2 are second lane.
         if number_of_instances == 4:
             set_count = 0
-            set_counter()  
+            #set_counter()  
             if set_count <= 2:
                 new_name = set_name_standard + SET_1 + is_failover(this_name)  
             else :
