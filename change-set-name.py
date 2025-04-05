@@ -409,8 +409,8 @@ for i in range(len(data_object["id_list"])):
         f"ID={this_id}, "  
         f"Name={this_name}, "  
         f"Channel ID={this_channel_ID}, "  
-        f"solution count {count_solution_instances(this_channel_ID)}, "  
-        f"failover_identified: {channel_failover_identifier(this_channel_ID,)}"  
+        f"solution count {number_of_instances}, "  
+        f"failover_identified: {failover_identified}"  
     )
 
     try:
