@@ -34,7 +34,7 @@ set_count = 0
 
 # Channel ID to Name mapping for us.dunkindonuts.switchboardcms.com
 channel_name_map_dunkin_prod = {
-    "1": "Drive Thru -",
+    "1": "DT DNK - Combo -",
     "3": "Coates-System -",
     "4": "DT DNK Presell -",
     "5": "FC DNK -",
@@ -61,6 +61,8 @@ channel_name_map_dunkin_prod = {
     "43": "FC BR Combo -",
     "44": "FC BR Standalone -",
     "45": "DT DNK-Combo -",
+    "46": "FC BR Special -",
+    "47": "FC BR Combo-special -",
 }
 
 # Channel_id to Name mapping for us-dunkindonuts-qa.uat.switchboardcms.com
