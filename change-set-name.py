@@ -160,21 +160,21 @@ def query_screen_set():
         command = f"mysql -u {DB_USER} -p'{DB_PASSWORD}' -D {DB_NAME} -e '{QUERY}'"
         result = subprocess.run(command, shell=True, capture_output=True, text=True, check=True)
         output = result.stdout.strip()  # Clear leading and trailing whitespaces
-        lines = output.split("\n")[1:]  # Split lines and remove header
+        rows = output.split("\n")[1:]  # Split lines and remove header
         
-        if not lines:  # Check if empty
+        if not rows:  # Check if empty
             print("No data found in the table. Exiting since we got nothing to change here.")
             sys.exit(0)
 
-        return lines  # Return list 
+        return rows  # Return query rows 
     except subprocess.CalledProcessError as e:
         print(f"Error executing MySQL command: {e}")
         return None
 
 
-#takes the query results already separated in rows, and splits results in 3 lists
-def process_query_results(query_result):
-    """Processes the query results from Bash output and creates 3 lists.
+
+def process_query_results(query_data):
+    """Processes the query results separated in rows and creates a dictionary with 3 lists.
     Args: 
         query_result: Values returned from querying screen_set
     Returns:
@@ -187,8 +187,8 @@ def process_query_results(query_result):
         "channel_id_list": []
     }
 
-    if query_result:
-        for line in query_result:  # Iterate over list
+    if query_data:
+        for line in query_data:  # Iterate over list
             parts = line.split("\t")
             if len(parts) == 3:
                 data_object["id_list"].append(parts[0])
