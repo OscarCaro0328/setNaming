@@ -430,7 +430,7 @@ for i in range(len(data_object["id_list"])):
 
         
         print(f"New name would be: {new_name}")
-        #change_db_value(int(this_id), new_name) if new_name != this_name else print("Old name is equal to new name. NOT CHANGING")
+        change_db_value(int(this_id), new_name) if new_name != this_name else print("Old name is equal to new name. NOT UPDATIMNG DB")
 
     except KeyError:
         print(f"Error: Channel ID '{this_channel_ID}' not found in channel_name_map. Skipping this value")  
