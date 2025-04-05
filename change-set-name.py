@@ -21,11 +21,14 @@ FAILOVER = "Failover"
 NOT_FAILOVER = ""
 
 # Constants
-#Domains in which implementation is defined
 DUNKIN_PROD = "us.dunkindonuts.switchboardcms.com"
 DUNKIN_QA_UAT = "us-dunkindonuts-qa.uat.switchboardcms.com"
 DOMAIN_FILE_PATH = "/var/lib/switchboard/data/domain.name"
+UPSTREAM_FILE_PATH = "/var/lib/switchboard/data/network.upstream"
+HQ_FILE_PATH = "/var/lib/switchboard/data/network.hq"
 channel_name_map = {}
+
+
 
 
 # Channel ID to Name mapping for us.dunkindonuts.switchboardcms.com
@@ -101,13 +104,13 @@ channel_name_map_dunkin_qa_uat = {
 
 # --------------------------------FUNCTIONS -----------------------------
 
-def define_current_domain():
+def define_current_domain(domain_file_path):
     """
-    Defines the domain of the mp based on /var/lib/switchboard/data/domain.name 
+    Defines the domain of the mp based on domain path 
     """
     global channel_name_map
     try:
-        with open(DOMAIN_FILE_PATH, "r") as file:
+        with open(domain_file_path, "r") as file:
             domain_name = file.read().strip()  # Read and remove leading/trailing whitespace
 
         if domain_name == DUNKIN_PROD:
@@ -126,7 +129,7 @@ def define_current_domain():
             
 
     except FileNotFoundError:
-        print(f"Error: File not found at {DOMAIN_FILE_PATH}. Unable to define domain")
+        print(f"Error: File not found at {domain_file_path}. Unable to define domain")
         sys.exit(1)
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
@@ -209,7 +212,7 @@ def is_failover(input_string):
     r"fail[\s\-/]*o[\s\-/]*v[\s\-/]*e?r|"  # Handles different spacing variations of "failover"
     r"fo|failvover|faiolver|failolver|faiover|faover|"
     r"faillover|feilover|failove|failver|faillover|fail over|fail|failover|backup|"
-    r"filover|failoverbak|falover|failovr|failloverr|failovered|"
+    r"filover|failoverbak|fail0ver|falover|failovr|failloverr|failovered|"
     r"failovering|failaover|failvoer|Set 2"
     r")\b|failover\b|failover\w+"
     )
@@ -227,7 +230,8 @@ def count_solution_instances(channel_id_value,channel_id_list):
     Counts occurrences of a solution value (channel_id).
 
     Args: 
-        channel_id_value (any): Any value from the column `channel_id`.
+        channel_id_value (int): Any value from the column `channel_id`.
+        channel_id_list (list): list with complete `channel_id`values
 
     Returns:
         int: Count of occurrences of the solution value in `channel_id_list`.
@@ -258,7 +262,9 @@ def channel_failover_identifier(target_channel_id, channel_id_list, failover_lis
     Checks if a the target_channel has a positively identified failover set.
 
     Args:
-        target_channel_id: The channel ID to search for.
+        target_channel_id (int): The channel ID to search for.
+        channel_id_list (list): list with complete `channel_id`values
+        failover_list (list): List created from the function create_failover_values_lists .
 
     Returns:
         True if at least one corresponding flag is 1, False otherwise.
@@ -326,18 +332,17 @@ def run_sb_package():
     except subprocess.CalledProcessError as e:
         return f"Error: {e.stderr}"  # Return error message if the command fails   
     
-def is_device_prime():
+def is_device_prime(upstream_file_path, hq_file_path):
     """
     Checks if network.upstream and network.hq files are the same.
 
     Returns:
         True if MP is prime, False otherwise.
     """
-    upstream_file = "/var/lib/switchboard/data/network.upstream"
-    hq_file = "/var/lib/switchboard/data/network.hq"
+
 
     try:
-        with open(upstream_file, "r") as f_upstream, open(hq_file, "r") as f_hq:
+        with open(upstream_file_path, "r") as f_upstream, open(hq_file_path, "r") as f_hq:
             upstream_content = f_upstream.read().strip()
             hq_content = f_hq.read().strip()
             return upstream_content == hq_content
@@ -349,41 +354,20 @@ def is_device_prime():
         print(f"An unexpected error occurred: {e}")
         return False
     
-def lane1_lane2_identifier(input_string): #this needs to be modified
-    """
-    Identifies if a string contains variations of "Lane 1" or "Lane 2",
-    regardless of order or location within the string.
+def set_counter(): #this needs to be modified
 
-    Args:
-        input_string: The string to search.
-
-    Returns:
-        "Lane 1" if the string contains variations of "Lane 1",
-        "Lane 2" if the string contains variations of "Lane 2",
-        None otherwise.
-    """
-    if not isinstance(input_string, str):
-        return None  # Handle non-string input
-
-    lane1_pattern = r"[Ll][Aa][Nn][Ee]\s*1"
-    lane2_pattern = r"[Ll][Aa][Nn][Ee]\s*2"
-
-    if re.search(lane1_pattern, input_string):
-        return "Lane 1"
-    elif re.search(lane2_pattern, input_string):
-        return "Lane 2"
-    else:
-        return "Not Identified"
+    result += 1
+    return result
 
 
-############### MAIN #####################
+################################### MAIN ################################
 
 #If MP is not prime, it exists with a non-error code 0.
-if not is_device_prime():
+if not is_device_prime(UPSTREAM_FILE_PATH, HQ_FILE_PATH):
     print("NOT PRIME MP. NOT EXECUTING")
     sys.exit(0)
 
-define_current_domain()
+define_current_domain(DOMAIN_FILE_PATH)
 
 test_db_connection()
 
@@ -431,18 +415,17 @@ for i in range(len(data_object["id_list"])):
             print(f"New name would be: {new_name}")
             # change_db_value(int(id_list[i]), new_name) if new_name != name_list[i] else print("Old name is equal to new name. NOT CHANGING")
 
-        # If a channel has 4 occurences, most likely it is a 2 Lane Drive Thru.
-        # If we are able to identify Lane 1 and Lane 2. We change their values
-        # Otherwise we leave it as is.
+        # If a channel has 4 occurences, most likely it is a 2 Lane Drive Thru or 2 IDMBs.
+        # Values in DB are always in order by creation
+        # First 2 are first lane, second 2 are second lane.
         if number_of_instances == 4:
-            lane = lane1_lane2_identifier(this_name)  
-            if lane == "Lane 1":
+            set_count = 0
+            set_counter()  
+            if set_count <= 2:
                 new_name = set_name_standard + SET_1 + is_failover(this_name)  
-            elif lane == "Lane 2":
+            else :
                 new_name = set_name_standard + SET_2 + is_failover(this_name)  
-            else:
-                new_name = this_name  # Not changing anything. 
-                print("Lane 1 or Lane 2 not identified, name not changing.")
+
             print(f"New name would be: {new_name}")
             # change_db_value(int(id_list[i]), new_name) if new_name != name_list[i] else print("Old name is equal to new name. NOT CHANGING")
 
