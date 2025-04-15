@@ -107,34 +107,34 @@ channel_name_map_dunkin_qa_uat = {
 # Channel_id to Name mapping for lab.us.dunkindonuts.coates.io
 channel_name_map_dunkin_lab = {
     "3" : "Coates-System -",
-    "30" : "FC DNK  -",
-    "31" : "FC DNK  -",
+    "30" : "FC DNK -",
+    "31" : "FC DNK -",
     "32" : "FC DNK -",
     "33" : "FC DNK -",
-    "34" : "OSB DNK  -",
-    "35" : "DT DNK Combo  -",
-    "36" : "DT DNK Presell  -",
-    "37" : "WUW DNK  -",
-    "38" : "Int Promo DNK  -",
+    "34" : "OSB DNK -",
+    "35" : "DT DNK Combo -",
+    "36" : "DT DNK Presell -",
+    "37" : "WUW DNK -",
+    "38" : "Int Promo DNK -",
     "45" : "FC BR Combo  -",
     "46" : "WUW DNK  -",
     "47" : "Logos -",
-    "50" : "FC BR Standalone  -",
-    "53" : "FC DNK  -",
-    "55" : "Int Promo DNK  -",
+    "50" : "FC BR Standalone -",
+    "53" : "FC DNK -",
+    "55" : "Int Promo DNK -",
     "56" : "FC DNK -",
-    "58" : "Ext Promo DNK  -",
-    "59" : "Ext Promo DNK  -",
+    "58" : "Ext Promo DNK -",
+    "59" : "Ext Promo DNK -",
     "67" : "FC DNK -",
     "68" : "FC DNK -",
     "69" : "DT DNK Non-OT -",
-    "70" : "FC BR  -",
-    "74" : "DT BR  -",
-    "75" : "FC BR Combo  -",
-    "76" : "FC BR Combo  -",
+    "70" : "FC BR -",
+    "74" : "DT BR -",
+    "75" : "FC BR Combo -",
+    "76" : "FC BR Combo -",
     "77" : "FC BR Standalone  -",
     "78" : "FC BR Combo-special -",
-    "79" : "FC BR Special  -",
+    "79" : "FC BR Special -",
 }
 
 
@@ -471,7 +471,7 @@ for i in range(len(data_object["id_list"])):
 
         
         print(f"New name would be: {new_name}")
-        change_db_value(int(this_id), new_name) if new_name != this_name else print("Old name is equal to new name. NOT UPDATING DB")
+        #change_db_value(int(this_id), new_name) if new_name != this_name else print("Old name is equal to new name. NOT UPDATING DB")
 
     except KeyError:
         print(f"Error: Channel ID '{this_channel_ID}' not found in channel_name_map. Skipping this value")  
