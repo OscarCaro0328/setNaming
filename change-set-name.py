@@ -23,6 +23,7 @@ NOT_FAILOVER = ""
 # Constants
 DUNKIN_PROD = "us.dunkindonuts.switchboardcms.com"
 DUNKIN_QA_UAT = "us-dunkindonuts-qa.uat.switchboardcms.com"
+DUNKIN_LAB = "lab.us.dunkindonuts.coates.io"
 DOMAIN_FILE_PATH = "/var/lib/switchboard/data/domain.name"
 UPSTREAM_FILE_PATH = "/var/lib/switchboard/data/network.upstream"
 HQ_FILE_PATH = "/var/lib/switchboard/data/network.hq"
@@ -103,6 +104,39 @@ channel_name_map_dunkin_qa_uat = {
     "38" : "FC BR Combo-special -",
 }
 
+# Channel_id to Name mapping for lab.us.dunkindonuts.coates.io
+channel_name_map_dunkin_lab = {
+    "3" : "Coates-System -",
+    "30" : "FC DNK  -",
+    "31" : "FC DNK  -",
+    "32" : "FC DNK -",
+    "33" : "FC DNK -",
+    "34" : "OSB DNK  -",
+    "35" : "DT DNK Combo  -",
+    "36" : "DT DNK Presell  -",
+    "37" : "WUW DNK  -",
+    "38" : "Int Promo DNK  -",
+    "45" : "FC BR Combo  -",
+    "46" : "WUW DNK  -",
+    "47" : "Logos -",
+    "50" : "FC BR Standalone  -",
+    "53" : "FC DNK  -",
+    "55" : "Int Promo DNK  -",
+    "56" : "FC DNK -",
+    "58" : "Ext Promo DNK  -",
+    "59" : "Ext Promo DNK  -",
+    "67" : "FC DNK -",
+    "68" : "FC DNK -",
+    "69" : "DT DNK Non-OT -",
+    "70" : "FC BR  -",
+    "74" : "DT BR  -",
+    "75" : "FC BR Combo  -",
+    "76" : "FC BR Combo  -",
+    "77" : "FC BR Standalone  -",
+    "78" : "FC BR Combo-special -",
+    "79" : "FC BR Special  -",
+}
+
 
 
 # --------------------------------FUNCTIONS -----------------------------
@@ -125,6 +159,11 @@ def define_current_domain(domain_file_path):
             print("QA/UAT environment detected.")
             print("Using QA/UAT values for the channels.")
             channel_name_map = channel_name_map_dunkin_qa_uat
+
+        elif domain_name == DUNKIN_LAB:
+            print("Dunkin LAB environment detected.")
+            print("Using Dunkin LAB values for the channels.")
+            channel_name_map = channel_name_map_dunkin_lab
             
         else:
             print(f"Domain : {domain_name} not implemented. Names can not be changed")
