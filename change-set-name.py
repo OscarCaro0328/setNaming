@@ -8,11 +8,9 @@ import subprocess
 import re
 
 # Database Configuration
-DB_USER = "root"
-DB_PASSWORD = "root"
-DB_NAME = "switchboard"
 SCREEN_SET_TABLE = "screen_set"
-QUERY = "SELECT * FROM screen_set ORDER BY channel_id;"
+QUERY_SCREEN_SET_TABLE = "SELECT * FROM screen_set ORDER BY channel_id;"
+QUERY_TEST_CONNECTION = "SELECT 1;"
 
 # SET name conventions
 SET_1 = " 1 "
@@ -178,11 +176,11 @@ def define_current_domain(domain_file_path):
         sys.exit(1)
 
 
-
+    #switchboard dev mysqlQuery implemented and tested in 2025-04/30
 def test_db_connection():
-    """Tests the database connection using Bash."""
+    """Tests the database connection using switchboard dev mysqlQuery."""
     try:
-        command = f"mysql -u {DB_USER} -p'{DB_PASSWORD}' -D {DB_NAME} -e 'SELECT 1'"
+        command = f"switchboard dev mysqlQuery '{QUERY_TEST_CONNECTION}'"
         subprocess.run(command, shell=True, check=True, capture_output=True)
         print("Connected to MySQL database successfully.")
     except subprocess.CalledProcessError as e:
@@ -202,7 +200,8 @@ def query_screen_set():
 
     """
     try:
-        command = f"mysql -u {DB_USER} -p'{DB_PASSWORD}' -D {DB_NAME} -e '{QUERY}'"
+        #
+        command = f"switchboard dev mysqlQuery '{QUERY_SCREEN_SET_TABLE}'"
         result = subprocess.run(command, shell=True, capture_output=True, text=True, check=True)
         output = result.stdout.strip()  # Clear leading and trailing whitespaces
         rows = output.split("\n")[1:]  # Split lines and remove header
@@ -338,10 +337,8 @@ def change_db_value(id, value):
     """
     try:
         
-        query_change = f"UPDATE {SCREEN_SET_TABLE} SET name = '{value}' WHERE id = {id};"
-
-        # Use double quotes around the query in the -e argument
-        command = f"mysql -u {DB_USER} -p'{DB_PASSWORD}' -D {DB_NAME} -e \"{query_change}\""
+        query_change = f"UPDATE {SCREEN_SET_TABLE} SET name = \\\"{value}\\\" WHERE id = {id};"
+        command = f"switchboard dev mysqlQuery \"{query_change}\""
 
         process = subprocess.run(command, shell=True, capture_output=True, text=True, check=True)
 
