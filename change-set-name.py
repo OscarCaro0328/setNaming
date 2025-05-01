@@ -13,9 +13,9 @@ QUERY_SCREEN_SET_TABLE = "SELECT * FROM screen_set ORDER BY channel_id;"
 QUERY_TEST_CONNECTION = "SELECT 1;"
 
 # SET name conventions
-SET_1 = " 1 "
-SET_2 = " 2 "
-FAILOVER = "Failover"
+SET_1 = "1"
+SET_2 = "2"
+FAILOVER = " Failover"
 NOT_FAILOVER = ""
 
 # Constants
@@ -33,106 +33,106 @@ set_count = 0
 
 # Channel ID to Name mapping for us.dunkindonuts.switchboardcms.com
 channel_name_map_dunkin_prod = {
-    "1": "DT DNK - Combo -",
-    "3": "Coates-System -",
-    "4": "DT DNK Presell -",
-    "5": "FC DNK -",
-    "6": "WUW DNK -",
-    "7": "WUW DNK -",
-    "8": "FC BR Combo -",
-    "9": "OSB DNK -",
-    "10": "FC DNK -",
-    "11": "FC DNK -",
-    "12": "FC DNK -",
-    "15": "FC BR Standalone -",
-    "19": "FC DNK -",
-    "20": "FC DNK -",
-    "29": "Int Promo DNK -",
-    "30": "FC DNK -",
-    "31": "DT DNK Non-OT -",
-    "32": "Int Promo DNK -",
-    "33": "Ext Promo DNK -",
-    "34": "Ext Promo DNK -",
-    "35": "FC DNK -",
-    "37": "FC BR -",
-    "38": "DT BR -",
-    "42": "FC BR Combo -",
-    "43": "FC BR Combo -",
-    "44": "FC BR Standalone -",
-    "45": "DT DNK-Combo -",
-    "46": "FC BR Special -",
-    "47": "FC BR Combo-special -",
+    "1": "DT DNK - Combo - ",
+    "3": "Coates-System - ",
+    "4": "DT DNK Presell - ",
+    "5": "FC DNK - ",
+    "6": "WUW DNK - ",
+    "7": "WUW DNK - ",
+    "8": "FC BR Combo - ",
+    "9": "OSB DNK - ",
+    "10": "FC DNK - ",
+    "11": "FC DNK - ",
+    "12": "FC DNK - ",
+    "15": "FC BR Standalone - ",
+    "19": "FC DNK - ",
+    "20": "FC DNK - ",
+    "29": "Int Promo DNK - ",
+    "30": "FC DNK - ",
+    "31": "DT DNK Non-OT - ",
+    "32": "Int Promo DNK - ",
+    "33": "Ext Promo DNK - ",
+    "34": "Ext Promo DNK - ",
+    "35": "FC DNK - ",
+    "37": "FC BR - ",
+    "38": "DT BR - ",
+    "42": "FC BR Combo - ",
+    "43": "FC BR Combo - ",
+    "44": "FC BR Standalone - ",
+    "45": "DT DNK-Combo - ",
+    "46": "FC BR Special - ",
+    "47": "FC BR Combo-special - ",
 }
 
 # Channel_id to Name mapping for us-dunkindonuts-qa.uat.switchboardcms.com
 channel_name_map_dunkin_qa_uat = {
-    "1" : "Drive Thru -",
-    "2" : "DT DNK Presell -",
-    "3" : "WUW DNK -",
-    "5" : "Coates-System -",
-    "6" : "FC DNK -",
-    "7" : "FC DNK -",
-    "8" : "FC DNK -",
-    "9" : "FC DNK -",
-    "10" : "OSB DNK -",
-    "11" : "Int Promo DNK -",
-    "12" : "FC BR Combo -",
-    "13" : "WUW DNK -",
-    "14" : "Logos -",
-    "15" : "FC BR Standalone -",
-    "16" : "FC DNK -",
-    "17" : "Int Promo DNK -",
-    "18" : "FC DNK -",
-    "19" : "Ext Promo DNK -",
-    "20" : "Ext Promo DNK -",
-    "21" : "FC DNK -",
-    "22" : "FC DNK -",
-    "23" : "FC BR -",
-    "24" : "DT BR -",
-    "26" : "Front Counter BR -",
-    "27" : "Front Counter BR -",
-    "29" : "FC BR Combo -",
-    "30" : "FC BR Combo -",
-    "31" : "FC BR Standalone -",
-    "32" : "DT DNK Non-OT -",
-    "33" : "DT DNK Combo -",
-    "34" : "Smithfields -",
-    "35" : "content test -",
-    "36" : "Albert - test -",
-    "38" : "FC BR Combo-special -",
+    "1" : "Drive Thru - ",
+    "2" : "DT DNK Presell - ",
+    "3" : "WUW DNK - ",
+    "5" : "Coates-System - ",
+    "6" : "FC DNK - ",
+    "7" : "FC DNK - ",
+    "8" : "FC DNK - ",
+    "9" : "FC DNK - ",
+    "10" : "OSB DNK - ",
+    "11" : "Int Promo DNK - ",
+    "12" : "FC BR Combo - ",
+    "13" : "WUW DNK - ",
+    "14" : "Logos - ",
+    "15" : "FC BR Standalone - ",
+    "16" : "FC DNK - ",
+    "17" : "Int Promo DNK - ",
+    "18" : "FC DNK - ",
+    "19" : "Ext Promo DNK - ",
+    "20" : "Ext Promo DNK - ",
+    "21" : "FC DNK - ",
+    "22" : "FC DNK - ",
+    "23" : "FC BR - ",
+    "24" : "DT BR - ",
+    "26" : "Front Counter BR - ",
+    "27" : "Front Counter BR - ",
+    "29" : "FC BR Combo - ",
+    "30" : "FC BR Combo - ",
+    "31" : "FC BR Standalone - ",
+    "32" : "DT DNK Non-OT - ",
+    "33" : "DT DNK Combo - ",
+    "34" : "Smithfields - ",
+    "35" : "content test - ",
+    "36" : "Albert - test - ",
+    "38" : "FC BR Combo-special - ",
 }
 
 # Channel_id to Name mapping for lab.us.dunkindonuts.coates.io
 channel_name_map_dunkin_lab = {
-    "3" : "Coates-System -",
-    "30" : "FC DNK -",
-    "31" : "FC DNK -",
-    "32" : "FC DNK -",
-    "33" : "FC DNK -",
-    "34" : "OSB DNK -",
-    "35" : "DT DNK Combo -",
-    "36" : "DT DNK Presell -",
-    "37" : "WUW DNK -",
-    "38" : "Int Promo DNK -",
-    "45" : "FC BR Combo -",
-    "46" : "WUW DNK -",
-    "47" : "Logos -",
-    "50" : "FC BR Standalone -",
-    "53" : "FC DNK -",
-    "55" : "Int Promo DNK -",
-    "56" : "FC DNK -",
-    "58" : "Ext Promo DNK -",
-    "59" : "Ext Promo DNK -",
-    "67" : "FC DNK -",
-    "68" : "FC DNK -",
-    "69" : "DT DNK Non-OT -",
-    "70" : "FC BR -",
-    "74" : "DT BR -",
-    "75" : "FC BR Combo -",
-    "76" : "FC BR Combo -",
-    "77" : "FC BR Standalone -",
-    "78" : "FC BR Combo-special -",
-    "79" : "FC BR Special -",
+    "3" : "Coates-System - ",
+    "30" : "FC DNK - ",
+    "31" : "FC DNK - ",
+    "32" : "FC DNK - ",
+    "33" : "FC DNK - ",
+    "34" : "OSB DNK - ",
+    "35" : "DT DNK Combo - ",
+    "36" : "DT DNK Presell - ",
+    "37" : "WUW DNK - ",
+    "38" : "Int Promo DNK - ",
+    "45" : "FC BR Combo - ",
+    "46" : "WUW DNK - ",
+    "47" : "Logos - ",
+    "50" : "FC BR Standalone - ",
+    "53" : "FC DNK - ",
+    "55" : "Int Promo DNK - ",
+    "56" : "FC DNK - ",
+    "58" : "Ext Promo DNK - ",
+    "59" : "Ext Promo DNK - ",
+    "67" : "FC DNK - ",
+    "68" : "FC DNK - ",
+    "69" : "DT DNK Non-OT - ",
+    "70" : "FC BR - ",
+    "74" : "DT BR - ",
+    "75" : "FC BR Combo - ",
+    "76" : "FC BR Combo - ",
+    "77" : "FC BR Standalone - ",
+    "78" : "FC BR Combo-special - ",
+    "79" : "FC BR Special - ",
 }
 
 
@@ -191,9 +191,10 @@ def test_db_connection():
 
 
 def query_screen_set():
-    """Queries the sql screen_set table using Bash .
+    """Queries the sql screen_set table using switchboard dev mysqlQuery .
     Returns: 
-        all the values separated in rows without header 
+        A strings representing the screen_set table. RAW data
+
          id | name            | channel_id |
         +----+-----------------+------------+
         |  1 | Lane 1          |          1 |
@@ -203,22 +204,41 @@ def query_screen_set():
         #
         command = f"switchboard dev mysqlQuery '{QUERY_SCREEN_SET_TABLE}'"
         result = subprocess.run(command, shell=True, capture_output=True, text=True, check=True)
-        output = result.stdout.strip()  # Clear leading and trailing whitespaces
-        rows = output.split("\n")[1:]  # Split lines and remove header
+        raw_data = result.stdout  # Clear leading and trailing whitespaces
         
-        if not rows:  # Check if empty
+        
+        if not raw_data:  # Check if empty
             print("No data found in the table. Exiting since we got nothing to change here.")
             sys.exit(0)
 
-        return rows  # Return query rows 
+        return raw_data  # Return query rows 
     except subprocess.CalledProcessError as e:
         print(f"Error executing MySQL command: {e}")
         return None
 
+def clean_mysql_output(raw_data):
+    """Processes the query raw data, removes formating, returns a list of lists od the wanted data.
+    Args: 
+        query_result: Raw data returned from querying screen_set
+    Returns:
+        an lsit with of lists with all the rows in the table 
+        id | name            | channel_id |  
+    """
+    lines = raw_data.strip().splitlines()
 
+    # Remove border lines (start with +) and empty lines
+    content_lines = [line for line in lines if not line.startswith('+') and line.strip()]
+
+    # Strip each line and split by |, removing leading/trailing whitespace
+    cleaned_rows = []
+    for line in content_lines:
+        parts = [col.strip() for col in line.strip('|').split('|')]
+        cleaned_rows.append(parts)
+
+    return cleaned_rows
 
 def process_query_results(query_data):
-    """Processes the query results separated in rows and creates a dictionary with 3 lists.
+    """Processes the query results and separates them in rows and creates a dictionary with 3 lists.
     Args: 
         query_result: Values returned from querying screen_set
     Returns:
@@ -230,14 +250,13 @@ def process_query_results(query_data):
         "name_list": [],
         "channel_id_list": []
     }
+    data_rows = query_data[1:]  # Skip the header row
 
-    if query_data:
-        for line in query_data:  # Iterate over list
-            parts = line.split("\t")
-            if len(parts) == 3:
-                data_object["id_list"].append(parts[0])
-                data_object["name_list"].append(parts[1])
-                data_object["channel_id_list"].append(parts[2])
+    if data_rows:
+        for row in data_rows:  # Iterate over list
+            data_object["id_list"].append(row[0])  # 'id' is at index 0
+            data_object["name_list"].append(row[1])  # 'name' is at index 1
+            data_object["channel_id_list"].append(row[2]) # 'channel_id' is at index 2
     return data_object
 
 
@@ -293,7 +312,7 @@ def create_failover_values_lists(name_list):
     """    
     failover_list = [0] * len(name_list)
     for i in range(len(name_list)):
-        if is_failover(name_list[i]) == "Failover":
+        if is_failover(name_list[i]) == FAILOVER:
             failover_list[i] = 1
     return failover_list
 
@@ -407,10 +426,9 @@ if not is_device_prime(UPSTREAM_FILE_PATH, HQ_FILE_PATH):
 
 define_current_domain(DOMAIN_FILE_PATH)
 test_db_connection()
-data = query_screen_set()
-
-if data:
-    data_object= process_query_results(data)
+raw_data = query_screen_set()
+parsed_data = clean_mysql_output(raw_data)
+data_object= process_query_results(parsed_data)
 
 failover_list = create_failover_values_lists(data_object['name_list']) 
 
