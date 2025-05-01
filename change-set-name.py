@@ -35,7 +35,7 @@ set_count = 0
 
 # Channel ID to Name mapping for us.dunkindonuts.switchboardcms.com
 channel_name_map_dunkin_prod = {
-    "1": "DT DNK - Combo -",
+    "1": "DT DNK Combo -",
     "3": "Coates-System -",
     "4": "DT DNK Presell -",
     "5": "FC DNK -",
