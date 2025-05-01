@@ -185,7 +185,7 @@ def test_db_connection():
         print("Connected to MySQL database successfully.")
     except subprocess.CalledProcessError as e:
         print(
-            f"Error: Unable to connect to the MySQL database. Please check your credentials and database settings. {e}"
+            f"Error: Unable to connect to the MySQL database. Please check mysql service. {e}"
         )
         sys.exit(1)
 
