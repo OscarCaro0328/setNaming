@@ -379,20 +379,23 @@ def change_db_value(id, value):
         return False
 
 
-    #Sb package is needed to updated db information on slaves
+#Sb package is needed to updated db information on slaves
 def run_sb_package():
     """Runs the 'switchboard package' command in a shell and returns the output."""
     print("Running sb package,please hang tight")
     try:
-        result = subprocess.run(
-            ["switchboard", "package"],  # Command as a list
-            stdout=subprocess.PIPE,        # Captures stdout
-            stderr=subprocess.PIPE,        # Captures stderr
-            check=True                  # Raises an error if the command fails
+        process = subprocess.Popen(
+            ["switchboard", "package"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
         )
-        return result.stdout.decode('utf-8')  # Return the output of the command
-    except subprocess.CalledProcessError as e:
-        return f"Error: {e.stderr}"  # Return error message if the command fails   
+        stdout, stderr = process.communicate()
+        if process.returncode == 0:
+            return stdout.decode('utf-8')
+        else:
+            return "Error: {}".format(stderr.decode('utf-8'))
+    except OSError as e:
+        return "Error executing 'switchboard package': {}".format(e)
 
 
 
