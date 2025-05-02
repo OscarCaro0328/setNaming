@@ -2,6 +2,9 @@
 #Script to update screen_set db table in media players for Prod Dunkin Domain
 
 
+#changes needed= Python 3.4 does not support capture_output.  stdout=subprocess.PIPE, stderr=subprocess.PIPE
+#The text=True parameter.decode('utf-8') :
+#No f strings. need to updated to .format()
 
 import sys
 import subprocess
@@ -141,7 +144,7 @@ channel_name_map_dunkin_lab = {
 
 def define_current_domain(domain_file_path):
     """
-    Defines the domain of the mp based on domain path 
+    Defines the domain of the mp based on domain path
     """
     global channel_name_map
     try:
@@ -152,7 +155,7 @@ def define_current_domain(domain_file_path):
             print("Production environment detected.")
             print("Using production values for the channels.")
             channel_name_map = channel_name_map_dunkin_prod
-            
+
         elif domain_name == DUNKIN_QA_UAT:
             print("QA/UAT environment detected.")
             print("Using QA/UAT values for the channels.")
@@ -162,17 +165,17 @@ def define_current_domain(domain_file_path):
             print("Dunkin LAB environment detected.")
             print("Using Dunkin LAB values for the channels.")
             channel_name_map = channel_name_map_dunkin_lab
-            
+
         else:
-            print(f"Domain : {domain_name} not implemented. Names can not be changed")
+            print("Domain : {} not implemented. Names can not be changed".format(domain_name))
             sys.exit(0)
-            
+
 
     except FileNotFoundError:
-        print(f"Error: File not found at {domain_file_path}. Unable to define domain")
+        print("Error: File not found at {}. Unable to define domain".format(domain_file_path))
         sys.exit(1)
     except Exception as e:
-        print(f"An unexpected error occurred: {e}")
+        print("An unexpected error occurred: {}".format(e))
         sys.exit(1)
 
 
@@ -180,19 +183,19 @@ def define_current_domain(domain_file_path):
 def test_db_connection():
     """Tests the database connection using switchboard dev mysqlQuery."""
     try:
-        command = f"switchboard dev mysqlQuery '{QUERY_TEST_CONNECTION}'"
-        subprocess.run(command, shell=True, check=True, capture_output=True)
+        command = "switchboard dev mysqlQuery '{}'".format(QUERY_TEST_CONNECTION)
+        subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         print("Connected to MySQL database successfully.")
     except subprocess.CalledProcessError as e:
         print(
-            f"Error: Unable to connect to the MySQL database. Please check mysql service. {e}"
+            "Error: Unable to connect to the MySQL database. Please check mysql service. {}".format(e)
         )
         sys.exit(1)
 
 
 def query_screen_set():
     """Queries the sql screen_set table using switchboard dev mysqlQuery .
-    Returns: 
+    Returns:
         A strings representing the screen_set table. RAW data
 
          id | name            | channel_id |
@@ -202,27 +205,27 @@ def query_screen_set():
     """
     try:
         #
-        command = f"switchboard dev mysqlQuery '{QUERY_SCREEN_SET_TABLE}'"
-        result = subprocess.run(command, shell=True, capture_output=True, text=True, check=True)
-        raw_data = result.stdout  # Clear leading and trailing whitespaces
-        
-        
+        command = "switchboard dev mysqlQuery '{}'".format(QUERY_SCREEN_SET_TABLE)
+        result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+        raw_data = result.stdout.decode('utf-8').strip()  # Clear leading and trailing whitespaces
+
+
         if not raw_data:  # Check if empty
             print("No data found in the table. Exiting since we got nothing to change here.")
             sys.exit(0)
 
-        return raw_data  # Return query rows 
+        return raw_data  # Return query rows
     except subprocess.CalledProcessError as e:
-        print(f"Error executing MySQL command: {e}")
+        print("Error executing MySQL command: {}".format(e))
         return None
 
 def clean_mysql_output(raw_data):
     """Processes the query raw data, removes formating, returns a list of lists od the wanted data.
-    Args: 
+    Args:
         query_result: Raw data returned from querying screen_set
     Returns:
-        an lsit with of lists with all the rows in the table 
-        id | name            | channel_id |  
+        an lsit with of lists with all the rows in the table
+        id | name            | channel_id |
     """
     lines = raw_data.strip().splitlines()
 
@@ -239,11 +242,11 @@ def clean_mysql_output(raw_data):
 
 def process_query_results(query_data):
     """Processes the query results and separates them in rows and creates a dictionary with 3 lists.
-    Args: 
+    Args:
         query_result: Values returned from querying screen_set
     Returns:
-        an object with 3 lists (id_list, name_list, channel_id_list) containing all the values in  
-        id | name            | channel_id |  
+        an object with 3 lists (id_list, name_list, channel_id_list) containing all the values in
+        id | name            | channel_id |
     """
     data_object = {
         "id_list": [],
@@ -276,12 +279,12 @@ def is_failover(input_string):
     r"failovering|failaover|failvoer|Set 2"
     r")\b|failover\b|failover\w+"
     )
-  
+
     if re.search(failover_pattern, input_string, re.IGNORECASE):
         return FAILOVER
     else:
         return NOT_FAILOVER
-    
+
 
 
 
@@ -289,7 +292,7 @@ def count_solution_instances(channel_id_value,channel_id_list):
     """
     Counts occurrences of a solution value (channel_id).
 
-    Args: 
+    Args:
         channel_id_value (int): Any value from the column `channel_id`.
         channel_id_list (list): list with complete `channel_id`values
 
@@ -309,7 +312,7 @@ def create_failover_values_lists(name_list):
 
     Returns:
         A list of bools (1 or 0) representing failover sets.
-    """    
+    """
     failover_list = [0] * len(name_list)
     for i in range(len(name_list)):
         if is_failover(name_list[i]) == FAILOVER:
@@ -341,7 +344,7 @@ def channel_failover_identifier(target_channel_id, channel_id_list, failover_lis
             failover_found = True
             break  # No need to continue searching if a 1 is found
 
-    return failover_found    
+    return failover_found
 
 
 def change_db_value(id, value):
@@ -355,24 +358,24 @@ def change_db_value(id, value):
         True if the update was successful, False otherwise.
     """
     try:
-        
-        query_change = f"UPDATE {SCREEN_SET_TABLE} SET name = \\\"{value}\\\" WHERE id = {id};"
-        command = f"switchboard dev mysqlQuery \"{query_change}\""
 
-        process = subprocess.run(command, shell=True, capture_output=True, text=True, check=True)
+        query_change = "UPDATE {} SET name = \"{}\" WHERE id = {};".format(SCREEN_SET_TABLE, value, id)
+        command = "switchboard dev mysqlQuery \"{}\"".format(query_change)
+
+        process = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
 
         if process.returncode == 0:
             print("Name changed successfully.")
             return True
         else:
-            print(f"Error changing name: {process.stderr}")
+            print("Error changing name: {}".format(process.stderr.decode('utf-8')))
             return False
 
     except subprocess.CalledProcessError as e:
-        print(f"Error: Unable to connect to the MySQL database. Please check your credentials and database settings. {e}")
+        print("Error: Unable to connect to the MySQL database. Please check mysql service. {}".format(e))
         return False
     except Exception as e:
-        print(f"An unexpected error occurred: {e}")
+        print("An unexpected error occurred: {}".format(e))
         return False
 
 
@@ -383,11 +386,11 @@ def run_sb_package():
     try:
         result = subprocess.run(
             ["switchboard", "package"],  # Command as a list
-            text=True,                  # Ensures output is in string format
-            capture_output=True,        # Captures stdout and stderr
+            stdout=subprocess.PIPE,        # Captures stdout
+            stderr=subprocess.PIPE,        # Captures stderr
             check=True                  # Raises an error if the command fails
         )
-        return result.stdout  # Return the output of the command
+        return result.stdout.decode('utf-8')  # Return the output of the command
     except subprocess.CalledProcessError as e:
         return f"Error: {e.stderr}"  # Return error message if the command fails   
 
@@ -495,4 +498,4 @@ for i in range(len(data_object["id_list"])):
         
 
 
-run_sb_package() #Prime media players will update slaves.
+print(run_sb_package()) #Prime media players will update slaves.
