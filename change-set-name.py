@@ -408,16 +408,17 @@ def is_device_prime(upstream_file_path, hq_file_path):
     """
 
     try:
-        with open(upstream_file_path, "r") as f_upstream, open(hq_file_path, "r") as f_hq:
+        with open(upstream_file_path, "r") as f_upstream:
             upstream_content = f_upstream.read().strip()
+        with open(hq_file_path, "r") as f_hq:
             hq_content = f_hq.read().strip()
-            return upstream_content == hq_content
+        return upstream_content == hq_content
 
     except FileNotFoundError as e:
-        print(f"Error: File not found: {e.filename}")
+        print("Error: File not found: {}".format(e.filename))
         return False
     except Exception as e:
-        print(f"An unexpected error occurred: {e}")
+        print("An unexpected error occurred: {}".format(e))
         return False
 
 
@@ -441,39 +442,39 @@ failover_list = create_failover_values_lists(data_object['name_list'])
 print("-" * 40)  # Prints 40 dashes for formatting purposes 
 
 # Name creation
-for i in range(len(data_object["id_list"])): 
+for i in range(len(data_object["id_list"])):
     # Prints current values
-    
-    this_id=data_object['id_list'][i]
+
+    this_id = data_object['id_list'][i]
     this_name = data_object['name_list'][i]
-    this_channel_ID=data_object['channel_id_list'][i]
-    number_of_instances = count_solution_instances(this_channel_ID, data_object['channel_id_list'])  
-    failover_identified = channel_failover_identifier(this_channel_ID, data_object['channel_id_list'], failover_list) 
+    this_channel_ID = data_object['channel_id_list'][i]
+    number_of_instances = count_solution_instances(this_channel_ID, data_object['channel_id_list'])
+    failover_identified = channel_failover_identifier(this_channel_ID, data_object['channel_id_list'], failover_list)
     new_name = this_name  # Default to the current name
 
     print(
-        f"ID={this_id}, "  
-        f"Name={this_name}, "  
-        f"Channel ID={this_channel_ID}, "  
-        f"solution count {number_of_instances}, "  
-        f"failover_identified: {failover_identified}"  
+        "ID={}, ".format(this_id) +
+        "Name={}, ".format(this_name) +
+        "Channel ID={}, ".format(this_channel_ID) +
+        "solution count {}, ".format(number_of_instances) +
+        "failover_identified: {}".format(failover_identified)
     )
 
     try:
- 
-        set_name_standard = channel_name_map[this_channel_ID] 
+
+        set_name_standard = channel_name_map[this_channel_ID]
 
         # If a channel has only one occurrence, no failover or set 2 possible, name changing for sure
         if number_of_instances == 1:
             new_name = set_name_standard + SET_1
-            
+
 
         # If a channel has 2 occurrences one set will be primary and the other one Failover
         # If we are not able to identify failover channel, we will skip name changing in this channel
         # This is to avoid both sets being named the same in a channel.
         if number_of_instances == 2 and failover_identified:
-            new_name = set_name_standard + SET_1 + is_failover(this_name)  
-            
+            new_name = set_name_standard + SET_1 + is_failover(this_name)
+
         # If a channel has 4 occurences, most likely it is a 2 Lane Drive Thru or 2 IDMBs.
         # Values in DB are always in order by creation
         # First 2 are first lane, second 2 are second lane.
@@ -481,24 +482,23 @@ for i in range(len(data_object["id_list"])):
             set_count += 1
 
             if set_count == 1:
-                new_name = set_name_standard + SET_1 
+                new_name = set_name_standard + SET_1
             elif set_count == 2:
-                new_name = set_name_standard + SET_1 + FAILOVER  
+                new_name = set_name_standard + SET_1 + FAILOVER
             elif set_count == 3:
-                new_name = set_name_standard + SET_2 
+                new_name = set_name_standard + SET_2
             elif set_count == 4:
                 new_name = set_name_standard + SET_2 + FAILOVER
                 set_count = 0  # Reset the counter for the next channel
 
-        
-        print(f"New name would be: {new_name}")
-        change_db_value(int(this_id), new_name) if new_name != this_name else print("Old name is equal to new name. NOT UPDATING DB")
+
+        print("New name would be: {}".format(new_name))
+        #change_db_value(int(this_id), new_name) if new_name != this_name else print("Old name is equal to new name. NOT UPDATING DB")
 
     except KeyError:
-        print(f"Error: Channel ID '{this_channel_ID}' not found in channel_name_map. Skipping this value")  
+        print("Error: Channel ID '{}' not found in channel_name_map. Skipping this value".format(this_channel_ID))
 
     print("-" * 40)  # Prints 40 dashes for formatting purposes
-        
 
 
 print(run_sb_package()) #Prime media players will update slaves.
