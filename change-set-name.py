@@ -359,7 +359,7 @@ def change_db_value(id, value):
     """
     try:
 
-        query_change = "UPDATE {} SET name = \"{}\" WHERE id = {};".format(SCREEN_SET_TABLE, value, id)
+        query_change = "UPDATE {} SET name = \\\"{}\\\" WHERE id = {};".format(SCREEN_SET_TABLE, value, id)
         command = "switchboard dev mysqlQuery \"{}\"".format(query_change)
 
         process = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
