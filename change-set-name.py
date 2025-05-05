@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-#Script to update screen_set db table in media players for Prod Dunkin Domain
+# Script to update screen_set db table in media players for Prod Dunkin Domain. 
+# It uses DUnkin standards Channel name + set number + is_Failover?
+# Works with python 3.4 version and above. No other requirenments
 
 
-#changes needed= Python 3.4 does not support capture_output.  stdout=subprocess.PIPE, stderr=subprocess.PIPE
-#The text=True parameter.decode('utf-8') :
-#No f strings. need to updated to .format()
+
 
 import sys
 import subprocess
@@ -254,13 +254,13 @@ def process_query_results(query_data):
         "name_list": [],
         "channel_id_list": []
     }
-    data_rows = query_data[1:]  # Skip the header row
+    data_rows = query_data[1:]  # Skips the header row
 
     if data_rows:
-        for row in data_rows:  # Iterate over list
-            data_object["id_list"].append(row[0])  # 'id' is at index 0
-            data_object["name_list"].append(row[1])  # 'name' is at index 1
-            data_object["channel_id_list"].append(row[2]) # 'channel_id' is at index 2
+        for row in data_rows:  
+            data_object["id_list"].append(row[0])  
+            data_object["name_list"].append(row[1])  
+            data_object["channel_id_list"].append(row[2]) 
     return data_object
 
 
@@ -428,7 +428,7 @@ def is_device_prime(upstream_file_path, hq_file_path):
 
 ################################### MAIN ########################################
 
-#Only meant to be executed in prime MP
+#Only meant to be executed in prime MP. Will exit on Slaves
 if not is_device_prime(UPSTREAM_FILE_PATH, HQ_FILE_PATH):
     print("NOT PRIME MP. NOT EXECUTING")
     sys.exit(0)
