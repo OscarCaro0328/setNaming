@@ -217,7 +217,8 @@ def query_screen_set():
         return raw_data  # Return query rows
     except subprocess.CalledProcessError as e:
         print("Error executing MySQL command: {}".format(e))
-        return None
+        print("Exiting script since we can't query the database")
+        sys.exit(1)
 
 def clean_mysql_output(raw_data):
     """Processes the query raw data, removes formating, returns a list of lists od the wanted data.
@@ -493,7 +494,7 @@ for i in range(len(data_object["id_list"])):
 
 
         print("New name would be: {}".format(new_name))
-        #change_db_value(int(this_id), new_name) if new_name != this_name else print("Old name is equal to new name. NOT UPDATING DB")
+        change_db_value(int(this_id), new_name) if new_name != this_name else print("Old name is equal to new name. NOT UPDATING DB")
 
     except KeyError:
         print("Error: Channel ID '{}' not found in channel_name_map. Skipping this value".format(this_channel_ID))
