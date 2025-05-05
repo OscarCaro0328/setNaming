@@ -336,8 +336,9 @@ def channel_failover_identifier(target_channel_id, channel_id_list, failover_lis
     """
 
     if len(channel_id_list) != len(failover_list):
-        raise ValueError("channel_id_list and flag_list must have the same length.")
-
+        print("Error: channel_id_list and failover_list must have the same length. Aborting")
+        sys.exit(1)
+        
     failover_found = False
 
     for i in range(len(channel_id_list)):
